@@ -10,16 +10,34 @@
 "ES_GSE103938"
 
 
-
-
 #' Te PASTA model
 #'
-#' The PASTA model is a glmnet model which was trained on transcriptomic samples of more than 10 datasets and multiple tissues to predict the age-shift between two pairs of samples. It is highly predictive of whether one sample is younger than another sample.
+#' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
 #'
 #' @format A cv.glmnet created using the glmnet package.
 #'
-"cvfit_pasta"
+"cvfit_PASTA"
 
+
+#' The regression model
+#'
+#' @format A cv.glmnet created using the glmnet package.
+#'
+"cvfit_REG"
+
+
+#' Genes used to convert genes ids from GEO tables from entrez to ensembl.
+#'
+#' @format Vector of ensembl gene names.
+#'
+'v_new_names_geo_mat'
+
+
+#' Genes used by the age-prediction models.
+#'
+#' @format Vector of ensembl gene names.
+#'
+'v_genes_model'
 
 
 # ## creating the test dataset: GSE103938
