@@ -1,7 +1,10 @@
 
 utils::globalVariables(c('v_genes_model', 'v_new_names_geo_mat', 'cvfit_PASTA', 
-	'cvfit_REG', 'coef_agediff'))
-
+	'cvfit_REG', 'beta_PASTA', 'beta_C46'))
+ES_GSE103938
+seu_orozco_2020_retina_horizontal_cells
+beta_PASTA
+beta_C46
 
 #' @export
 #' @examples
@@ -95,6 +98,12 @@ getting_geo_count_mat_for_age_prediction <- function(gse_id,
 	return(mat)
 }
 
+# converting_ES_for_age_prediction <- function(ES, rank_norm = T){
+# 	mat = Biobase::exprs(ES)
+# 	mat %<>% filtering_genes_and_rank_normalizing(rank_norm)
+# 	return(mat)
+# }
+
 #' @export
 #' @examples
 #' pdata = getting_GEO_pdata('GSE121276')
@@ -145,6 +154,8 @@ getting_GEO_ES_for_age_model <- function(gse_id){
 #' library(maggritr)
 #' ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 #' v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
+#' data(ES_GSE103938)
+#' ES = ES_GSE103938
 predicting_age_score <- function(mat, model_type = 'PASTA'){
 	library(glmnet)
   data(cvfit_REG,    envir = environment())
@@ -174,24 +185,37 @@ add_age_preds_to_pdata <- function(pdata, mat_t, REG = T, PASTA = T,
 	if(PASTA) pdata[, PASTA := predicting_age_score(mat_t, model_type = 'PASTA')]
 	if(CT46)  pdata[, PASTA := predicting_age_score(mat_t, model_type = 'CT46')]
 	colnames(pdata) %<>% gsub('\\.ch1', '', .)
+	colnames(pdata) %<>% gsub('\\:ch1', '', .)
+	colnames(pdata) %<>% gsub(' ', '_', .)
+	colnames(pdata) %<>% gsub('\\.', '_', .)
 	return(pdata)
 }
 
 #' @export
+#' @examples
 #' library(maggritr)
 #' library(data.table)
 #' ES = getting_GEO_ES_for_age_model('GSE103938') %T>% pdim # 8113 8
 #' pdata = get_pdata_with_age_scores(ES)
-#' dcast(pdata, treated.with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
-#' dcast(pdata, treated.with ~ vector, value.var = 'REG', fun.aggregate = mean)
-get_pdata_with_age_scores <- function(ES, REG = T, PASTA = T, CT46 = F){
-	mat_t = t(Biobase::exprs(ES))
+#' dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
+#' dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mean)
+#' data(ES_GSE103938)
+#' ES = ES_GSE103938
+#' pdata = get_pdata_with_age_scores(ES, filter_genes = T, rank_norm = T)
+#' dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
+get_pdata_with_age_scores <- function(ES, filter_genes = F, rank_norm = F,
+	REG = T, PASTA = T, CT46 = F){
+	mat = Biobase::exprs(ES)
+	if(filter_genes) mat %<>% filtering_genes_and_rank_normalizing(rank_norm = F)
+	if(rank_norm) mat %<>% applying_rank_normalization
+	mat_t = t(mat)
 	pdata = Biobase::pData(ES) %>% copy %>% setDT
 	pdata %<>% add_age_preds_to_pdata(mat_t, REG, PASTA, CT46)
 	return(pdata)
 }
 
 #' @export
+#' @examples
 #' data(seu_orozco_2020_retina_horizontal_cells)
 #' seu = seu_orozco_2020_retina_horizontal_cells %T>% pdim # 57596 1875
 #' rm(seu_orozco_2020_retina_horizontal_cells)
