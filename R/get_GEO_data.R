@@ -155,12 +155,13 @@ predicting_age_score <- function(mat, model_type = 'PASTA'){
 # mat = getting_geo_count_mat_for_age_prediction('GSE121276')
 # predicting_age_score(t(mat))
 # ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
-# ( v_age_scores = predicting_age_score(t(exprs(ES))) )
+# ( v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
 
 #' @export
+#' @importFrom data.table setDT := copy .SD
 get_pdata_with_age_scores <- function(ES){
-	mat_t = t(exprs(ES))
-	pdata = pData(ES) %>% copy %>% setDT
+	mat_t = t(Biobase::exprs(ES))
+	pdata = Biobase::pData(ES) %>% copy %>% setDT
 	pdata[, REG   := predicting_age_score(mat_t, model_type = 'REG')]
 	pdata[, PASTA := predicting_age_score(mat_t, model_type = 'PASTA')]
 	colnames(pdata) %<>% gsub('\\.ch1', '', .)
