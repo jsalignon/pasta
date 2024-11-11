@@ -3,6 +3,7 @@ utils::globalVariables(c('v_genes_model', 'v_new_names_geo_mat', 'cvfit_PASTA',
 	'cvfit_REG', 'coef_agediff'))
 
 
+#' @export
 checking_if_url_is_valid <- function(url_in,t=2){
   con = url(url_in)
   check = suppressWarnings(try(open.connection(con, open = 'rt', timeout = t),
@@ -12,6 +13,7 @@ checking_if_url_is_valid <- function(url_in,t=2){
 }
 # check_if_url_is_valid(geo_url)
 
+#' @export
 getting_geo_url <- function(gse_id){
 	urld    = 'https://www.ncbi.nlm.nih.gov/geo/download/?format=file&type=rnaseq_counts'
 	geo_url = paste0(urld, '&acc=', gse_id, '&file=', gse_id, 
@@ -19,6 +21,7 @@ getting_geo_url <- function(gse_id){
 	return(geo_url)
 }
 
+#' @export
 getting_geo_valid_url <- function(gse_id){
 	geo_url = getting_geo_url(gse_id)
 	valid_url = checking_if_url_is_valid(geo_url)
@@ -27,6 +30,7 @@ getting_geo_valid_url <- function(gse_id){
 }
 # getting_geo_valid_url('GSE121277')
 
+#' @export
 getting_geo_count_mat <- function(gse_id){
 	urld <- 'https://www.ncbi.nlm.nih.gov/geo/download/?format=file&type=rnaseq_counts'
 	path <- paste0(urld, '&acc=', gse_id, '&file=', gse_id, '_raw_counts_GRCh38.p13_NCBI.tsv.gz');
@@ -37,6 +41,7 @@ getting_geo_count_mat <- function(gse_id){
 }
 # mat = getting_geo_count_mat('GSE121276')
 
+#' @export
 converting_geo_mat_gene_ids <- function(mat){
 	# Loading the PASTA model
   data(v_new_names_geo_mat, envir = environment())
@@ -51,6 +56,7 @@ converting_geo_mat_gene_ids <- function(mat){
 # mat %<>% converting_geo_mat_gene_ids
 
 
+#' @export
 filtering_geo_mat_genes_for_age_prediction <- function(mat, 
 	rank_normalization = T){
   data(v_genes_model, envir = environment())
@@ -68,11 +74,15 @@ filtering_geo_mat_genes_for_age_prediction <- function(mat,
 # mat %<>% converting_geo_mat_gene_ids
 # mat %<>% filtering_geo_mat_genes_for_age_prediction(T) %>% dim
 
+
+#' @export
 applying_rank_normalization <- function(mat, ties_method = 'average'){
 	mat = apply(mat, 2, rank, ties.method = ties_method)
 	return(mat)
 }
 
+
+#' @export
 getting_geo_count_mat_for_age_prediction <- function(gse_id, 
 	rank_normalization = T){
 	mat = get_geo_count_mat(gse_id)
@@ -83,6 +93,7 @@ getting_geo_count_mat_for_age_prediction <- function(gse_id,
 # mat = getting_geo_count_mat_for_age_prediction('GSE121276')
 
 
+#' @export
 getting_GEO_pdata <- function(gse_id, mat){
 	lES = GEOquery::getGEO(gse_id, getGPL = F)
 	if(length(lES) > 1) stop('There is more than one data source. Manually 
@@ -93,6 +104,7 @@ getting_GEO_pdata <- function(gse_id, mat){
 }
 # pdata = getting_GEO_pdata('GSE121276')
 
+#' @export
 getting_GEO_ES <- function(mat, pdata){
 	samples_mat = colnames(mat)
 	samples_pda = rownames(pdata)
@@ -107,6 +119,7 @@ getting_GEO_ES <- function(mat, pdata){
 # pdata = getting_GEO_pdata('GSE121276')
 # ES = getting_GEO_ES(mat, pdata)
 
+#' @export
 getting_GEO_ES_for_age_model <- function(gse_id){
 	mat = getting_geo_count_mat_for_age_prediction(gse_id)
 	pdata = getting_GEO_pdata(gse_id)
@@ -122,6 +135,7 @@ getting_GEO_ES_for_age_model <- function(gse_id){
 # gse_id = 'GSE103938'
 # ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 
+#' @export
 predicting_age_score <- function(mat, model_type = 'PASTA'){
   data(cvfit_PASTA, envir = environment())
   data(cvfit_REG, envir = environment())
@@ -143,6 +157,7 @@ predicting_age_score <- function(mat, model_type = 'PASTA'){
 # ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 # ( v_age_scores = predicting_age_score(t(exprs(ES))) )
 
+#' @export
 get_pdata_with_age_scores <- function(ES){
 	mat_t = t(exprs(ES))
 	pdata = pData(ES) %>% copy %>% setDT
