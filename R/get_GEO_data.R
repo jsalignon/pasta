@@ -119,7 +119,7 @@ getting_GEO_ES <- function(mat, pdata){
 		between the count and annotation matrices')
 	if(!all.equal(samples_mat, samples_pda)) stop('Sample ids differs between 
 		the count and annotation matrices')
-	ES = Biobase::ExpressionSet(mat, phenoData = AnnotatedDataFrame(pdata))
+	ES = Biobase::ExpressionSet(mat, phenoData = Biobase::AnnotatedDataFrame(pdata))
 	return(ES)
 }
 
