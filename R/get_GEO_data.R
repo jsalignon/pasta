@@ -4,6 +4,8 @@ utils::globalVariables(c('v_genes_model', 'v_new_names_geo_mat', 'cvfit_PASTA',
 
 
 #' @export
+#' @examples
+#' check_if_url_is_valid(geo_url)
 checking_if_url_is_valid <- function(url_in,t=2){
   con = url(url_in)
   check = suppressWarnings(try(open.connection(con, open = 'rt', timeout = t),
@@ -11,7 +13,6 @@ checking_if_url_is_valid <- function(url_in,t=2){
   suppressWarnings(try(close.connection(con), silent = T))
   ifelse(is.null(check), TRUE, FALSE)
 }
-# check_if_url_is_valid(geo_url)
 
 #' @export
 getting_geo_url <- function(gse_id){
@@ -22,15 +23,18 @@ getting_geo_url <- function(gse_id){
 }
 
 #' @export
+#' @examples
+#' getting_geo_valid_url('GSE121277')
 getting_geo_valid_url <- function(gse_id){
 	geo_url = getting_geo_url(gse_id)
 	valid_url = checking_if_url_is_valid(geo_url)
   if(!valid_url) stop('Count matrix not available for this GSE id.')
 	return(geo_url)
 }
-# getting_geo_valid_url('GSE121277')
 
 #' @export
+#' @examples
+#' mat = getting_geo_count_mat('GSE121276')
 getting_geo_count_mat <- function(gse_id){
 	urld <- 'https://www.ncbi.nlm.nih.gov/geo/download/?format=file&type=rnaseq_counts'
 	path <- paste0(urld, '&acc=', gse_id, '&file=', gse_id, '_raw_counts_GRCh38.p13_NCBI.tsv.gz');
@@ -39,9 +43,12 @@ getting_geo_count_mat <- function(gse_id){
 		colClasses = 'integer'), rownames = 1)
 	return(mat)
 }
-# mat = getting_geo_count_mat('GSE121276')
 
 #' @export
+#' @examples
+#' gse_id = 'GSE121276'
+#' mat = getting_geo_count_mat(gse_id)
+#' mat %<>% converting_geo_mat_gene_ids
 converting_geo_mat_gene_ids <- function(mat){
 	# Loading the PASTA model
   data(v_new_names_geo_mat, envir = environment())
@@ -51,12 +58,13 @@ converting_geo_mat_gene_ids <- function(mat){
 	return(mat)
 
 }
-# gse_id = 'GSE121276'
-# mat = getting_geo_count_mat(gse_id)
-# mat %<>% converting_geo_mat_gene_ids
-
 
 #' @export
+#' @examples
+#' # gse_id = 'GSE121276'
+#' mat = getting_geo_count_mat(gse_id)
+#' mat %<>% converting_geo_mat_gene_ids
+#' mat %<>% filtering_geo_mat_genes_for_age_prediction(T) %>% dim
 filtering_geo_mat_genes_for_age_prediction <- function(mat, 
 	rank_normalization = T){
   data(v_genes_model, envir = environment())
@@ -69,11 +77,6 @@ filtering_geo_mat_genes_for_age_prediction <- function(mat,
 	}
 	return(mat)
 }
-# gse_id = 'GSE121276'
-# mat = getting_geo_count_mat(gse_id)
-# mat %<>% converting_geo_mat_gene_ids
-# mat %<>% filtering_geo_mat_genes_for_age_prediction(T) %>% dim
-
 
 #' @export
 applying_rank_normalization <- function(mat, ties_method = 'average'){
@@ -81,8 +84,9 @@ applying_rank_normalization <- function(mat, ties_method = 'average'){
 	return(mat)
 }
 
-
 #' @export
+#' @examples
+#' mat = getting_geo_count_mat_for_age_prediction('GSE121276')
 getting_geo_count_mat_for_age_prediction <- function(gse_id, 
 	rank_normalization = T){
 	mat = getting_geo_count_mat(gse_id)
@@ -90,10 +94,10 @@ getting_geo_count_mat_for_age_prediction <- function(gse_id,
 	mat %<>% filtering_geo_mat_genes_for_age_prediction(rank_normalization)
 	return(mat)
 }
-# mat = getting_geo_count_mat_for_age_prediction('GSE121276')
-
 
 #' @export
+#' @examples
+#' pdata = getting_GEO_pdata('GSE121276')
 getting_GEO_pdata <- function(gse_id, mat){
 	lES = GEOquery::getGEO(gse_id, getGPL = F)
 	if(length(lES) > 1) stop('There is more than one data source. Manually 
@@ -102,9 +106,12 @@ getting_GEO_pdata <- function(gse_id, mat){
 	raw_pdata = data.frame(Biobase::pData(lES[[1]]))
 	return(raw_pdata)
 }
-# pdata = getting_GEO_pdata('GSE121276')
 
 #' @export
+#' @examples
+#' mat = getting_geo_count_mat_for_age_prediction('GSE121276')
+#' pdata = getting_GEO_pdata('GSE121276')
+#' ES = getting_GEO_ES(mat, pdata)
 getting_GEO_ES <- function(mat, pdata){
 	samples_mat = colnames(mat)
 	samples_pda = rownames(pdata)
@@ -115,11 +122,12 @@ getting_GEO_ES <- function(mat, pdata){
 	ES = Biobase::ExpressionSet(mat, phenoData = AnnotatedDataFrame(pdata))
 	return(ES)
 }
-# mat = getting_geo_count_mat_for_age_prediction('GSE121276')
-# pdata = getting_GEO_pdata('GSE121276')
-# ES = getting_GEO_ES(mat, pdata)
 
 #' @export
+#' @importFrom magrittr %>% %<>% %T>%
+#' @examples
+#' gse_id = 'GSE103938'
+#' ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 getting_GEO_ES_for_age_model <- function(gse_id){
 	mat = getting_geo_count_mat_for_age_prediction(gse_id)
 	pdata = getting_GEO_pdata(gse_id)
@@ -132,10 +140,13 @@ getting_GEO_ES_for_age_model <- function(gse_id){
 	ES = getting_GEO_ES(mat1, pdata1)
 	return(ES)
 }
-# gse_id = 'GSE103938'
-# ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 
 #' @export
+#' @importFrom magrittr %>% %<>% %T>%
+#' @examples
+#' ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
+#' v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
+
 predicting_age_score <- function(mat, model_type = 'PASTA'){
   data(cvfit_PASTA, envir = environment())
   data(cvfit_REG, envir = environment())
@@ -152,13 +163,14 @@ predicting_age_score <- function(mat, model_type = 'PASTA'){
 
 	return(v_age_scores) 
 }
-# mat = getting_geo_count_mat_for_age_prediction('GSE121276')
-# predicting_age_score(t(mat))
-# ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
-# ( v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
 
 #' @export
-#' @importFrom data.table setDT := copy .SD
+#' @importFrom data.table setDT := copy .SD dcast
+#' @importFrom magrittr %>% %<>% %T>%
+#' ES = getting_GEO_ES_for_age_model('GSE103938') %T>% pdim # 8113 8
+#' pdata = get_pdata_with_age_scores(ES)
+#' dcast(pdata, treated.with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
+#' dcast(pdata, treated.with ~ vector, value.var = 'REG', fun.aggregate = mean)
 get_pdata_with_age_scores <- function(ES){
 	mat_t = t(Biobase::exprs(ES))
 	pdata = Biobase::pData(ES) %>% copy %>% setDT
@@ -167,17 +179,4 @@ get_pdata_with_age_scores <- function(ES){
 	colnames(pdata) %<>% gsub('\\.ch1', '', .)
 	return(pdata)
 }
-# ES = getting_GEO_ES_for_age_model('GSE103938') %T>% pdim # 8113 8
-# pdata = get_pdata_with_age_scores(ES)
 
-# dcast(pdata, treated.with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
-# #      treated.with OSKM expressing vector RAS expressing vector empty vector (MSCV)
-# # 1:           <NA>               5.440307              45.85673            15.20337
-# # 2: 10nM Rapamycin              -3.126968              46.03901                 NaN
-# # 3:  1nM Rapamycin               2.938418              47.81470                 NaN
-
-# dcast(pdata, treated.with ~ vector, value.var = 'REG', fun.aggregate = mean)
-# #      treated.with OSKM expressing vector RAS expressing vector empty vector (MSCV)
-# # 1:           <NA>               66.69800              78.45117            74.71354
-# # 2: 10nM Rapamycin               65.51776              78.92485                 NaN
-# # 3:  1nM Rapamycin               66.69006              84.39482                 NaN
