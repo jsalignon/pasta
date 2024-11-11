@@ -1,4 +1,7 @@
 
+utils::globalVariables(c('v_genes_model', 'v_new_names_geo_mat', 'cvfit_PASTA', 
+	'cvfit_REG', 'coef_agediff'))
+
 
 checking_if_url_is_valid <- function(url_in,t=2){
   con = url(url_in)
@@ -42,23 +45,6 @@ converting_geo_mat_gene_ids <- function(mat){
 	mat = mat[grep('ENSG', v_new_names_geo_mat, value = T),]
 	return(mat)
 
-	## the object v_new_names was created like this:
-	# mat = getting_geo_count_mat('GSE112068')
-	# library(biomaRt)
-	# ensembl = useMart('ensembl', dataset = 'hsapiens_gene_ensembl')
-	# # biomaRt::listAttributes(ensembl) %>% .[grep('entrezgene_id', .[,1], ignore.case = T),]
-	# v_ids <- rownames(mat)
-	# mapping <- getBM(
-	#     attributes = c('entrezgene_id', 'ensembl_gene_id'),
-	#     filters = 'entrezgene_id',
-	#     values = v_ids,
-	#     mart = ensembl
-	# )
-	# v_names = mapping$ensembl_gene_id %>% setNames(., mapping$entrezgene_id)
-	# v_names[duplicated(v_names)] = NA
-	# v_new_names = v_names[rownames(mat)]
-	# v_new_names[is.na(v_new_names)] = paste0('NA_', 1:length(which(is.na(v_new_names))))
-	# names(v_new_names) <- NULL
 }
 # gse_id = 'GSE121276'
 # mat = get_geo_count_mat(gse_id)
