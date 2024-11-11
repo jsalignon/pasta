@@ -157,7 +157,7 @@ predicting_age_score <- function(mat, model_type = 'PASTA'){
 	if(!model_type %in% c('PASTA', 'REG')) stop('Specify a valid model; either 
 		PASTA or REG')
 
-	v_age_scores = predict(cur_model, mat, s = s_lambda, type = 'link')[,1] %>% 
+	v_age_scores = predict(cur_model, mat, s = 'lambda.min', type = 'link')[,1] %>% 
 		as.numeric
 	if(model_type == 'PASTA') v_age_scores = v_age_scores * coef_agediff
 
