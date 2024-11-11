@@ -148,6 +148,7 @@ getting_GEO_ES_for_age_model <- function(gse_id){
 #' ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 #' v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
 predicting_age_score <- function(mat, model_type = 'PASTA'){
+	library(glmnet)
   data(cvfit_PASTA, envir = environment())
   data(cvfit_REG, envir = environment())
   data(coef_agediff, envir = environment())
