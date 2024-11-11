@@ -144,9 +144,9 @@ getting_GEO_ES_for_age_model <- function(gse_id){
 #' @export
 #' @importFrom magrittr %>% %<>% %T>%
 #' @examples
+#' library(maggritr)
 #' ES = getting_GEO_ES_for_age_model('GSE121276') %T>% pdim # 8113 8
 #' v_age_scores = predicting_age_score(t(Biobase::exprs(ES))) )
-
 predicting_age_score <- function(mat, model_type = 'PASTA'){
   data(cvfit_PASTA, envir = environment())
   data(cvfit_REG, envir = environment())
@@ -167,6 +167,8 @@ predicting_age_score <- function(mat, model_type = 'PASTA'){
 #' @export
 #' @importFrom data.table setDT := copy .SD dcast
 #' @importFrom magrittr %>% %<>% %T>%
+#' library(maggritr)
+#' library(data.table)
 #' ES = getting_GEO_ES_for_age_model('GSE103938') %T>% pdim # 8113 8
 #' pdata = get_pdata_with_age_scores(ES)
 #' dcast(pdata, treated.with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
