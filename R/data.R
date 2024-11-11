@@ -4,10 +4,20 @@
 #'
 #' The raw counts ExpressionSet R object for GSE103938 obtained from GEO. Title of the dataset on GEO: "Transcriptome analysis of OSKM- or RAS-induced senescent IMR90 fibroblasts treated with Rapamycin.". 
 #'
-#' @format A data frame with 57232 genes and 21 samples
+#' @format A data frame with 57232 genes and 21 samples.
 #' @source The object was obtained from the supplementary file GSE103938_GeneCounts.xlsx at the link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103938.
 #'
 "ES_GSE103938"
+
+
+#' Test dataset seu_orozco_2020_retina_horizontal_cells
+#'
+#' The Seurat R object for seu_orozco_2020_retina_horizontal_cells obtained from CZ cellXGene. Title of the dataset on cellXGene.: "Integration of eQTL and a Single-Cell Atlas in the Human Eye Identifies Causal Genes for Age-Related Macular Degeneration". 
+#'
+#' @format A data frame with 57596 genes and 1875 cells.
+#' @source The object was obtained from the supplementary file GSE103938_GeneCounts.xlsx at the link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103938.
+#'
+"seu_orozco_2020_retina_horizontal_cells"
 
 
 #' The regression model

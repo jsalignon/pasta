@@ -192,7 +192,9 @@ get_pdata_with_age_scores <- function(ES, REG = T, PASTA = T, CT46 = F){
 }
 
 #' @export
-#' seu = readRDS('../data/cellxgene/6934232e-4db4-423f-836d-bd730941aeba.rds') %T>% pdim #  60579 37121
+#' data(seu_orozco_2020_retina_horizontal_cells)
+#' seu = seu_orozco_2020_retina_horizontal_cells %T>% pdim # 57596 1875
+#' rm(seu_orozco_2020_retina_horizontal_cells)
 #' seu_bulk = make_pseudobulks_from_seurat(seu)
 make_pseudobulks_from_seurat <- function(seu, chunk_size = 1000, verbose = T){
 	pdata1 = seu[[c('type', 'true_age', 'age')]] %>% setDT %T>% pnrow # 2491

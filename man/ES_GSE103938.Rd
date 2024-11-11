@@ -5,7 +5,7 @@
 \alias{ES_GSE103938}
 \title{Test dataset GSE103938}
 \format{
-A data frame with 57232 genes and 21 samples
+A data frame with 57232 genes and 21 samples.
 }
 \source{
 The object was obtained from the supplementary file GSE103938_GeneCounts.xlsx at the link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103938.
