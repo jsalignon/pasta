@@ -19,6 +19,7 @@ Imports:
 	stats,
 	utils
 Suggests:
-	ggplot2
+	ggplot2,
+	Seurat
 LazyData: true
 LazyDataCompression:xz

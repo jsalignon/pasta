@@ -10,6 +10,13 @@
 "ES_GSE103938"
 
 
+#' The regression model
+#'
+#' @format A cv.glmnet created using the glmnet package.
+#'
+"cvfit_REG"
+
+
 #' The PASTA model
 #'
 #' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
@@ -19,20 +26,31 @@
 "cvfit_PASTA"
 
 
-#' Coefficients for the PASTA model
+#' Beta coefficient for conveting PASTA predictions into age-shift units
 #'
 #' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
 #'
 #' @format A cv.glmnet created using the glmnet package.
 #'
-"coef_agediff"
+"beta_PASTA"
 
 
-#' The regression model
+#' The Traditional classifier <40 vs >60 years old model
+#'
+#' The Traditional classifier model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict if a sample is young or old. 
 #'
 #' @format A cv.glmnet created using the glmnet package.
 #'
-"cvfit_REG"
+"cvfit_C46"
+
+
+#' Beta coefficient for conveting PASTA predictions into age-shift units
+#'
+#' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
+#'
+#' @format A cv.glmnet created using the glmnet package.
+#'
+"beta_C46"
 
 
 #' Genes used to convert genes ids from GEO tables from entrez to ensembl.
