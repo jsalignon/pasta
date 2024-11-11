@@ -99,7 +99,7 @@ getting_GEO_pdata <- function(gse_id, mat){
 	if(length(lES) > 1) stop('There is more than one data source. Manually 
 		curation is needed') 
 	ES = lES[[1]]
-	raw_pdata = data.frame(pData(lES[[1]]))
+	raw_pdata = data.frame(Biobase::pData(lES[[1]]))
 	return(raw_pdata)
 }
 # pdata = getting_GEO_pdata('GSE121276')
