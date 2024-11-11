@@ -52,7 +52,7 @@ converting_geo_mat_gene_ids <- function(mat){
 
 }
 # gse_id = 'GSE121276'
-# mat = get_geo_count_mat(gse_id)
+# mat = getting_geo_count_mat(gse_id)
 # mat %<>% converting_geo_mat_gene_ids
 
 
@@ -70,7 +70,7 @@ filtering_geo_mat_genes_for_age_prediction <- function(mat,
 	return(mat)
 }
 # gse_id = 'GSE121276'
-# mat = get_geo_count_mat(gse_id)
+# mat = getting_geo_count_mat(gse_id)
 # mat %<>% converting_geo_mat_gene_ids
 # mat %<>% filtering_geo_mat_genes_for_age_prediction(T) %>% dim
 
@@ -85,7 +85,7 @@ applying_rank_normalization <- function(mat, ties_method = 'average'){
 #' @export
 getting_geo_count_mat_for_age_prediction <- function(gse_id, 
 	rank_normalization = T){
-	mat = get_geo_count_mat(gse_id)
+	mat = getting_geo_count_mat(gse_id)
 	mat %<>% converting_geo_mat_gene_ids
 	mat %<>% filtering_geo_mat_genes_for_age_prediction(rank_normalization)
 	return(mat)
