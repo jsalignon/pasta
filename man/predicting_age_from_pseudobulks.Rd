@@ -8,7 +8,7 @@ predicting_age_from_pseudobulks(
   seu_bulk,
   REG = TRUE,
   PASTA = TRUE,
-  CT46 = FALSE
+  CT46 = TRUE
 )
 }
 \description{
