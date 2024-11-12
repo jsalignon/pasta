@@ -334,7 +334,7 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
 	requireNamespace('Seurat', quietly = TRUE)
 
   mat = Seurat::GetAssayData(seu_bulk, layer = 'data')
-  if(class(mat) == 'dgCMatrix') mat %<>% as.matrix
+  if(inherits(mat, 'dgCMatrix')) { mat %<>% as.matrix }
 	mat %<>% filtering_age_model_genes_and_rank_norm
 	pdata = seu_bulk[[c('chunk_size', 'type', 'age')]] %>% setDT
 	pdata %<>% adding_age_preds_to_pdata(t(mat), REG = REG, PASTA = PASTA, 
