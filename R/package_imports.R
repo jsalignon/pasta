@@ -1,5 +1,7 @@
 
-#' @importFrom data.table setDT := copy .SD dcast
+#' @importFrom data.table setDT := copy .SD dcast .N
 #' @importFrom magrittr %>% %<>% %T>%
-#' #' @keywords internal
+#' @importFrom utils data
+#' @keywords internal
 NULL
+
