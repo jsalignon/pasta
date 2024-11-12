@@ -10,7 +10,7 @@ making_pseudobulks_and_predict_age(
   verbose = TRUE,
   REG = TRUE,
   PASTA = TRUE,
-  CT46 = FALSE
+  CT46 = TRUE
 )
 }
 \description{

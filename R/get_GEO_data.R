@@ -308,7 +308,7 @@ making_pseudobulks_from_seurat <- function(seu, chunk_size = 1000, verbose = TRU
 		}
 
 		seu_bulk <- Seurat::AggregateExpression(seu, 
-			group.by = v_grouping_vars, return.seurat = TRUE)
+			group.by = v_grouping_vars, return.seurat = TRUE, verbose = FALSE)
 
 		if(n_types == 1) seu_bulk$type = unique(seu$type)
 
@@ -336,7 +336,8 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
   mat = Seurat::GetAssayData(seu_bulk, layer = 'data')
 	mat %<>% filtering_age_model_genes_and_rank_norm
 	pdata = seu_bulk[[c('chunk_size', 'type', 'age')]] %>% setDT
-	pdata %<>% adding_age_preds_to_pdata(t(mat))
+	pdata %<>% adding_age_preds_to_pdata(t(mat), REG = REG, PASTA = PASTA, 
+		CT46 = CT46)
   return(pdata)
 }
 
@@ -346,12 +347,24 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
 #'
 #' @export
 making_pseudobulks_and_predict_age <- function(seu, chunk_size = 1000, 
-	verbose = TRUE, REG = TRUE, PASTA = TRUE, CT46 = FALSE){
+	verbose = TRUE, REG = TRUE, PASTA = TRUE, CT46 = TRUE){
 	seu_bulk = making_pseudobulks_from_seurat(seu, chunk_size = chunk_size, 
 		verbose = verbose)
 	pdata = predicting_age_from_pseudobulks(seu_bulk, REG = REG, PASTA = PASTA, 
 		CT46 = CT46)
 	return(pdata)
+}
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+predicting_age_multiple_chunks <- function(seu, v_chunk_sizes = c(500, 1000), 
+	REG = TRUE, PASTA = TRUE, CT46 = TRUE, verbose = TRUE){
+	pdata_big = purrr::map(v_chunk_sizes, ~making_pseudobulks_and_predict_age(seu, .x, 
+		REG = REG, PASTA = PASTA, CT46 = CT46)) %>% do.call(rbind, .)
+	return(pdata_big)
 }
 
 #' Title of the function
@@ -373,11 +386,12 @@ making_pseudobulks_and_predict_age <- function(seu, chunk_size = 1000,
 #' ( pdata = predicting_age_from_pseudobulks(seu_bulk) )
 #' ( pdata = making_pseudobulks_and_predict_age(seu) )
 #' ( pdata_big = predicting_age_multiple_chunks(seu) )
-#' pdata_big[, cor(age, REG), c('type', 'chunk_size')]
-predicting_age_multiple_chunks <- function(seu, v_chunk_sizes = c(500, 1000), 
-	REG = TRUE, PASTA = TRUE, CT46 = FALSE){
-	pdata_big = purrr::map(v_chunk_sizes, ~making_pseudobulks_and_predict_age(seu, .x, 
-		REG = REG, PASTA = PASTA, CT46 = CT46)) %>% do.call(rbind, .)
-	return(pdata_big)
+#' get_cor_by_chunk_from_pdata_big(pdata_big)
+get_cor_by_chunk_from_pdata_big <- function(pdata_big){
+	dt_melt = data.table::melt(pdata_big, id.vars = c('chunk_size', 'type', 'age'), 
+		variable.name = 'model_type', value.name = 'pred_age')
+	dt_cor = dt_melt[, cor(age, pred_age), c('chunk_size', 'model_type')]
+	dt_cor1 = data.table::dcast(dt_cor, chunk_size ~ model_type, value.var = 'V1')
+	return(dt_cor1)
 }
 

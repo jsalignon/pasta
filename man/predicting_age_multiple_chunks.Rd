@@ -9,25 +9,10 @@ predicting_age_multiple_chunks(
   v_chunk_sizes = c(500, 1000),
   REG = TRUE,
   PASTA = TRUE,
-  CT46 = FALSE
+  CT46 = TRUE,
+  verbose = TRUE
 )
 }
 \description{
 Description of the function.
-}
-\examples{
-library(magrittr)
-library(jsutil)
-data(seu_orozco_2020_retina_horizontal_cells)
-seu = seu_orozco_2020_retina_horizontal_cells \%T>\% pdim # 57596 1875
-rm(seu_orozco_2020_retina_horizontal_cells)
-seu$age  = seu$development_stage \%>\% gsub('-year.*', '', .) \%>\% gsub('-', ' ', .)
-seu$type = seu$cell_type \%>\% as.character
-seu \%>\% filter_cell_types_in_seu_object(dry_run = TRUE, verbose = TRUE)
-seu \%<>\% filter_cell_types_in_seu_object \%T>\% pdim # 57596 1875
-seu_bulk = making_pseudobulks_from_seurat(seu)
-( pdata = predicting_age_from_pseudobulks(seu_bulk) )
-( pdata = making_pseudobulks_and_predict_age(seu) )
-( pdata_big = predicting_age_multiple_chunks(seu) )
-pdata_big[, cor(age, REG), c('type', 'chunk_size')]
 }
