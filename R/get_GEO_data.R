@@ -66,7 +66,6 @@ getting_geo_count_mat <- function(gse_id){
 #'
 #' @export
 converting_entrez_to_ensembl_gene_ids <- function(mat){
-	# Loading the PASTA model
   data(v_new_names_geo_mat, envir = environment())
 
 	rownames(mat) = v_new_names_geo_mat
@@ -75,6 +74,74 @@ converting_entrez_to_ensembl_gene_ids <- function(mat){
 
 }
 
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+converting_gene_ids_to_ensembl_gene_ids_with_biomaRt <- function(mat){
+	rownames(mat) = v_new_names_geo_mat
+	mat = mat[grep('ENSG', v_new_names_geo_mat, value = TRUE),]
+	return(mat)
+
+}
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+get_mart_ensembl_human <- function() biomaRt::useMart('ensembl', 
+	dataset = 'hsapiens_gene_ensembl')
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+check_biomart_attributes <- function(cur_mart, pattern) {
+	biomaRt::listAttributes(cur_mart) %>% 
+		.[grep(pattern, .[,1], ignore.case = T),] %>% print
+}
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+converting_gene_ids_to_ensembl_gene_ids <- function(mat, cur_mart,
+	platform = 'illumina_humanht_12_v4'){
+	requireNamespace('biomaRt', quietly = TRUE)
+
+	v_ids <- rownames(mat)
+	dt_ids <- biomaRt::getBM(
+	    attributes = c(platform, 'ensembl_gene_id'),
+	    filters    = platform,
+	    values     = v_ids,
+	    mart       = cur_mart
+	) %>% setDT
+
+	return(dt_ids)
+
+}
+
+#' Title of the function
+#'
+#' Description of the function.
+#'
+#' @export
+renaming_rows_in_mat_after_gene_id_conversion <- function(mat, dt_ids){
+	v_names = dt_ids$ensembl_gene_id %>% setNames(., dt_ids[[1]])
+	v_names[duplicated(v_names)] = NA
+	v_new_names = v_names[rownames(mat)]
+	v_new_names[is.na(v_new_names)] = paste0('NA_', 1:length(which(is.na(v_new_names))))
+	names(v_new_names) <- NULL
+	mat1 = mat
+	rownames(mat1) = v_new_names
+	mat1 = mat1[grep('ENSG', v_new_names, value = T),]
+	return(mat1)
+}
 
 #' Title of the function
 #'
