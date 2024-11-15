@@ -210,10 +210,15 @@ getting_geo_count_mat_for_age_prediction <- function(gse_id){
 #' @export
 getting_GEO_pdata <- function(gse_id, mat){
 	lES = GEOquery::getGEO(gse_id, getGPL = FALSE)
-	if(length(lES) > 1) stop('There is more than one data source. Manually 
-		curation is needed') 
-	ES = lES[[1]]
-	raw_pdata = data.frame(Biobase::pData(lES[[1]]))
+	if(length(lES) > 1) {
+		warning('There is more than one data source. We will try
+		to combine them but one should double check the results.')
+		l_pdata = purrr::map(lES, ~Biobase::pData(.x))
+		raw_pdata = do.call(rbind, l_pdata)
+	} else {
+		ES = lES[[1]]
+		raw_pdata = data.frame(Biobase::pData(lES[[1]]))
+	}
 	return(raw_pdata)
 }
 
@@ -320,7 +325,7 @@ adding_age_preds_to_pdata <- function(pdata, mat_t, REG = TRUE, PASTA = TRUE,
 #' pdata = getting_pdata_with_age_scores(ES, filter_genes = TRUE, rank_norm = TRUE)
 #' dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
 getting_pdata_with_age_scores <- function(ES, filter_genes = FALSE, 
-	rank_norm = FALSE, REG = TRUE, PASTA = TRUE, CT46 = FALSE){
+	rank_norm = FALSE, REG = TRUE, PASTA = TRUE, CT46 = TRUE){
 	mat = Biobase::exprs(ES)
 	if(filter_genes) mat %<>% filtering_age_model_genes_and_rank_norm
 	if(rank_norm) mat %<>% applying_rank_normalization

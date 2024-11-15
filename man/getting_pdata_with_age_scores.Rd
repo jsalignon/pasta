@@ -10,7 +10,7 @@ getting_pdata_with_age_scores(
   rank_norm = FALSE,
   REG = TRUE,
   PASTA = TRUE,
-  CT46 = FALSE
+  CT46 = TRUE
 )
 }
 \description{
