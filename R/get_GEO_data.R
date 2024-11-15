@@ -212,9 +212,10 @@ getting_GEO_pdata <- function(gse_id, mat){
 	lES = GEOquery::getGEO(gse_id, getGPL = FALSE)
 	if(length(lES) > 1) {
 		warning('There is more than one data source. We will try
-		to combine them but one should double check the results.')
+		to combine them but it may fail or give wrong results. Please double check.')
 		l_pdata = purrr::map(lES, ~Biobase::pData(.x))
 		raw_pdata = do.call(rbind, l_pdata)
+		rownames(raw_pdata) = raw_pdata$geo_accession
 	} else {
 		ES = lES[[1]]
 		raw_pdata = data.frame(Biobase::pData(lES[[1]]))
