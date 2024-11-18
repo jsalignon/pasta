@@ -4,7 +4,7 @@
 \alias{getting_geo_valid_url}
 \title{Title of the function}
 \usage{
-getting_geo_valid_url(gse_id)
+getting_geo_valid_url(gse_id, return_boolean = F)
 }
 \description{
 Description of the function.

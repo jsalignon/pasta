@@ -39,9 +39,10 @@ getting_geo_url <- function(gse_id){
 #' Description of the function.
 #'
 #' @keywords internal
-getting_geo_valid_url <- function(gse_id){
+getting_geo_valid_url <- function(gse_id, return_boolean = F){
 	geo_url = getting_geo_url(gse_id)
 	valid_url = checking_if_url_is_valid(geo_url)
+	if(return_boolean) return(valid_url)
   if(!valid_url) stop('Count matrix not available for this GSE id.')
 	return(geo_url)
 }
