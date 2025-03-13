@@ -23,6 +23,8 @@
 #' The regression model
 #'
 #' @format A cv.glmnet created using the glmnet package.
+#' @docType data
+#' @keywords data
 #'
 "cvfit_REG"
 

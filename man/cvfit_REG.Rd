@@ -13,4 +13,4 @@ cvfit_REG
 \description{
 The regression model
 }
-\keyword{datasets}
+\keyword{data}
