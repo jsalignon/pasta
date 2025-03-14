@@ -1,0 +1,170 @@
+
+---
+title: "Pasta Analysis Tutorial: Kim, Aging Cell, 2013"
+author: "Jérôme Salignon"
+date: "`r Sys.Date()`"
+output:
+  md_document:
+    variant: gfm
+    toc: true
+---
+
+# Dependencies
+
+Before running this tutorial, please ensure that the following packages are installed: **pasta**, **magrittr**, **data.table**, **ggplot2**, **gtools**, **GEOquery**, and **biomaRt**.
+
+You can install any missing packages using `install.packages()`, `BiocManager::install()` for bioconductor packages, or `devtools::install_github()` for GitHub packages.
+
+
+# Introduction
+
+This tutorial demonstrates an analysis using the **Pasta** package on the dataset **GSE41714** from Kim, *Aging Cell*, 2013.  
+The study, *"Implications of time-series gene expression profiles of replicative senescence"*, is available at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41714) and [Aging Cell](https://onlinelibrary.wiley.com/doi/10.1111/acel.12087).
+
+
+# Data acquisition, age-prediction, and processing
+
+In this section, we load the GEO ExpressionSet, extract the expression matrix, and inspect the phenotype data.
+
+## Loading all needed libraries
+
+```{r setup, include=FALSE}
+library(pasta)
+library(magrittr)
+library(data.table)
+library(ggplot2)
+library(gtools)
+library(GEOquery)
+library(biomaRt)
+```
+
+## Getting GEO ExpressionSet
+
+```{r load-ES, message=FALSE, warning=FALSE}
+file_Kim2013 = 'output/ES_Kim2013.rds'
+if(!file.exists(file_Kim2013)){
+  dir.create('output', showWarnings = F)
+  # Load the ExpressionSet for GSE41714 using GEOquery
+  ES <- getGEO('GSE41714', GSEMatrix = TRUE, getGPL = FALSE)[[1]]
+  # Extract the expression matrix and display dimensions
+  saveRDS(ES, file_Kim2013)
+}
+```
+
+## Gene ID conversion using biomaRt
+
+In this section, we use **biomaRt** to query Ensembl and convert Illumina HumanHT-12 V4 probe IDs to Ensembl gene IDs.
+
+```{r biomaRt-conversion, message=FALSE, warning=FALSE}
+file_humanht12v4 = 'output/dt_ids__humanht_12_v4.rds'
+
+if(!file.exists(file_humanht12v4)){
+  
+  ES = readRDS(file_Kim2013)
+  mat <- exprs(ES)
+  
+  # Load Ensembl using the Pasta helper function
+  ensembl <- get_mart_ensembl_human()
+  check_biomart_attributes(ensembl, 'v4') 
+
+  # If no results, try a different Ensembl version:
+  ensembl_109 <- useEnsembl(biomart = 'genes', dataset = 'hsapiens_gene_ensembl',
+                            version = 110)
+  check_biomart_attributes(ensembl_109, 'v4')
+
+  # Use an older version if needed:
+  ensembl_108 <- useEnsembl(biomart = 'genes', dataset = 'hsapiens_gene_ensembl',
+                            version = 105)
+  check_biomart_attributes(ensembl_108, 'v4')
+  # Expected output should list 'illumina_humanht_12_v4' as a probe.
+
+  # Convert gene IDs using the provided function
+  dt_ids <- converting_gene_ids_to_ensembl_gene_ids(mat, ensembl_108, 'illumina_humanht_12_v4')
+  saveRDS(dt_ids, file_humanht12v4)
+}
+
+```
+
+
+## Processing Expression data
+
+Here we update the ExpressionSet and filter genes using the pasta functions.
+
+```{r data-processing, message=FALSE, warning=FALSE}
+ES = readRDS(file_Kim2013)
+dt_ids = readRDS(file_humanht12v4)
+mat <- exprs(ES)
+
+# Rename rows in the expression matrix using the conversion table and filter genes
+mat1 <- renaming_rows_in_mat_after_gene_id_conversion(mat, dt_ids) %T>% pdim
+mat2 <- filtering_age_model_genes_and_rank_norm(mat1) %T>% pdim  # Expected dimensions: 8113 x 12
+
+# Extract phenotype data; here, we assume population doubling info is in column 31
+pdata <- pData(ES) %>% setDT
+pdata1 <- pdata[, 31] %>% set_colnames('population_doubling')
+```
+
+
+## Adding metadata and predicted ages
+
+We now define a data table for beta-galactosidase measurements (a proxy for senescence) and add age predictions.
+
+```{r add-age-predictions, message=FALSE, warning=FALSE}
+# Define a table with doubling time and beta-gal measurements
+dt_beta_gal <- data.table(
+  doubling_time  = c(2, 2, 3, 5, 7, 10, 12, 14, 15, 20, 30, 40),
+  nb_of_passages = c(16, 22, 54, 67, 75, 79, 81, 83, 85, 87, 88, 89),
+  betagal_low    = c(0, 0, 0, 0, 12, 20, 42, 44, 45, 77, 79, 90),
+  betagal_high   = c(0, 0, 0, 0, 0, 2, 7, 3, 8, 44, 45, 63),
+  day            = c(25, 40, 110, 165, 210, 240, 265, 290, 320, 350, 405, 445)
+)
+# Check if the doubling times match
+all.equal(as.numeric(pdata1$population_doubling[1:11]), dt_beta_gal$doubling_time[1:11])  # should be TRUE
+
+# Use dt_beta_gal as phenotype data and add age predictions
+pdata1 <- copy(dt_beta_gal)
+pdata1 %<>% adding_age_preds_to_pdata(t(mat2), CT46 = TRUE)
+dim(pdata1)
+```
+
+
+## Reshaping to long format
+
+```{r reshape-correlation, message=FALSE, warning=FALSE}
+# Melt pdata1 into long format; using the column names of pdata1 as identifier variables
+v_ids <- names(dt_beta_gal)
+pdata1_long <- melt(pdata1, id.vars = v_ids, variable.name = 'model_type')
+pdata1_long <- pdata1_long[model_type == 'PASTA']
+pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'),
+                      variable.name = 'outcome', value.name = 'outcome_value')
+```
+
+
+# Results
+
+## Computing correlations
+
+```{r compute-correlations, message=FALSE, warning=FALSE}
+# Compute Pearson correlations for each outcome by model_type
+dt_cor <- pdata1_long1[, .(PCC = cor(value, outcome_value)), by = .(model_type, outcome)][order(-PCC)]
+# Clean up outcome names for readability
+dt_cor[, outcome := outcome %>% gsub('_', ' ', .) %>% gsub('beta', 'B', .) %>% gsub('nb of ', '', .)]
+dt_cor[, outcome := factor(outcome, levels = rev(as.character(dt_cor[model_type == 'PASTA']$outcome)))]
+print(dt_cor)
+```
+
+## Visualization
+
+```{r plot-visualization, message=FALSE, warning=FALSE}
+# Plot predicted age scores (from the PASTA model) against the day variable
+p_cor_sen_day_2 <- ggplot(pdata1_long1[outcome == 'day'], aes(x = outcome_value, y = value)) + 
+  xlab('Day') + 
+  ylab('Age Score') + 
+  geom_point(size = 1, alpha = 0.7) + 
+  ggtitle('Senescence Timecourse') +
+  theme_minimal()
+
+print(p_cor_sen_day_2)
+```
+
+

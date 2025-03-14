@@ -1,0 +1,57 @@
+
+# https://cellxgene.cziscience.com/collections/939769a8-d8d2-4d01-abfc-55699893fd49
+<!-- # wget https://datasets.cellxgene.cziscience.com/b8ac4433-b426-4e90-b0ed-52e0d7ad4e2b.rds -->
+# Horizontal cells of human eye
+# retina
+# normal
+# 10x 3' v3
+# Homo sapiens
+# 1,875
+
+library(magrittr)
+library(jsutil)
+library(pasta)
+
+# Load example dataset
+data(seu_orozco_2020_retina_horizontal_cells)
+seu <- seu_orozco_2020_retina_horizontal_cells %T>% pdim # dimensions: 57,596 genes x 1875 cells
+rm(seu_orozco_2020_retina_horizontal_cells)
+
+# Process the metadata
+seu$age <- seu$development_stage %>% gsub("-year.*", "", .) %>% gsub("-", " ", .)
+seu$type <- seu$cell_type %>% as.character
+
+# Preview cell type filtering
+seu %>% filter_cell_types_in_seu_object(dry_run = TRUE, verbose = TRUE)
+
+# Filter the Seurat object to keep only cell types with at least 500 cells
+seu %<>% filter_cell_types_in_seu_object %T>% pdim
+
+# Create pseudobulks of 5000 cells each and predict age
+dt_age_pred <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
+print(pdata)
+
+# Predict age using multiple pseudobulk chunk sizes
+( v_chunk_sizes = 2^(0:10) )
+dt_age_pred = predicting_age_multiple_chunks(seu, v_chunk_sizes)
+
+get_cor_by_chunk_from_pdata_big(dt_age_pred)
+
+# Plot results for the different models:
+v_model_types_lvls = c('REGR', 'TC46', 'AS40')
+model_type2 = factor(model_type1, levels = v_model_types_lvls)
+
+
+cur_dt_cor = dt_age_pred[, .(REGR = cor(age, REG), AS40 = cor(age, PASTA),
+TC46 = cor(age, CT46)), 'chunk_size']
+cur_dt1 = melt(cur_dt_cor, id.vars = 'chunk_size', variable.name = 'Modeling_strategy')
+cur_dt1$Modeling_strategy %<>% add_model_type_levels
+# print(cur_dt1$Modeling_strategy %>% levels)
+p1 = ggplot(cur_dt1, aes(x = log2(chunk_size), y = value, 
+	colour = Modeling_strategy)) +
+	scale_colour_manual(values = c('AS40' = 'red2', 'REGR' = 'dodgerblue', 
+	  'TC46' = 'forestgreen')) +
+	geom_point() + my_theme + geom_line() + ggtitle(title) +
+	ylab('PCC')
+
+print(p1)

@@ -12,34 +12,43 @@ output:
 
 # Introduction
 
-This document provides an example analysis using Pasta on dataset [**GSE149694**](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) from Liu & Polo (2020, *Nature*). The study, titled _"Reprogramming roadmap reveals route to human induced trophoblast stem cells"_, is available online at [Nature](https://www.nature.com/articles/s41586-020-2734-6) and via [HRPI](http://hrpi.ddnetbio.com/).
+This document provides an example analysis using Pasta on dataset **GSE149694** from Liu & Polo, *Nature*, 2020. The study, titled _"Reprogramming roadmap reveals route to human induced trophoblast stem cells"_, is available online at [GEO]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694)), [Nature](https://www.nature.com/articles/s41586-020-2734-6), and on the [HRPI website](http://hrpi.ddnetbio.com/).
 
-# Data Acquisition and Processing
+# Data acquisition, age-prediction, and processing
 
 In this section, we download the GEO ExpressionSet, obtain phenotype data with age scores, and perform some data wrangling. The following code executes the complete workflow using the Pasta functions.
 
+## Loading all needed libraries
+
 ```{r setup, include=FALSE}
+library(pasta)
 library(magrittr)
 library(data.table)
 library(ggplot2)
+library(gtools)
 library(jsutil)
-library(gtools)  # for mixedsort
-# Load the Pasta package and any additional required functions
-library(pasta)
 ```
 
-## Get GEO ExpressionSet and Age Scores
+## Getting GEO ExpressionSet and predicted age scores
 
 ```{r get-ES, message=FALSE, warning=FALSE}
-# Download ExpressionSet for GSE149694
-ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+
+file_LiuPolo2020 = 'output/ES_LiuPolo2020.rds'
+if(!file.exists(file_LiuPolo2020)){
+  dir.create('output', showWarnings = F)
+  # Download ExpressionSet for GSE149694
+  ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+  saveRDS(ES, file_LiuPolo2020)
+}
+
+ES = readRDS(file_LiuPolo2020)
 # Obtain phenotype data with age predictions
 pdata <- getting_pdata_with_age_scores(ES)
 # Subset phenotype data for plotting
 pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 ```
 
-## Reshape and Clean the Data
+## Reshaping to long format and cleaning the metadata
 
 Here we reshape the data and extract information such as condition, time, and replicate details from the title.
 
@@ -54,11 +63,11 @@ dt[, title := NULL]
 dt[, time1 := as.integer(time)]
 ```
 
-# Advanced Processing for Liu & Polo 2020 Data
 
-The following section demonstrates additional processing steps. We adjust the fibroblast and non-fibroblast conditions and reassign time values. Finally, we compute correlations and create plots.
+## Adding initial time points
 
-## Load and Prepare Data
+The initial time points (Fibroblast, day 3 and 7) is the same between all conditions ('NHSM', '5iLAF', 'Primed', 't2iLGoY', 'RSeT').
+missing for all samples. We add this time point to each condition so we can then compute correlation.
 
 ```{r load-adjust-data, message=FALSE, warning=FALSE}
 dt_pasta <- dt[model_type == 'PASTA']
@@ -80,7 +89,10 @@ dt_liuPolo[, time1 := time %>% gsub('D', '', .) %>% gsub('P3', '30', .) %>%
 unique(dt_liuPolo[, c('condition', 'time', 'time1')])[order(condition, time1)]
 ```
 
-## Compute Correlations
+
+# Results
+
+## Computing correlations
 
 We calculate both Pearson and Spearman correlations between predicted age scores and the true time values.
 
@@ -100,6 +112,7 @@ cat("Pearson correlation between time1 and age_score:",
 cat("Spearman correlation between time1 and age_score:",
     cor(dt_liuPolo$time1, dt_liuPolo$age_score, method = 'spearman'), "\n")
 ```
+
 
 ## Visualization
 

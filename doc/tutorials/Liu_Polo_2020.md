@@ -1,48 +1,53 @@
 - [Introduction](#introduction)
-- [Data Acquisition and Processing](#data-acquisition-and-processing)
-  - [Get GEO ExpressionSet and Age
-    Scores](#get-geo-expressionset-and-age-scores)
-  - [Reshape and Clean the Data](#reshape-and-clean-the-data)
-- [Advanced Processing for Liu & Polo 2020
-  Data](#advanced-processing-for-liu-polo-2020-data)
-  - [Load and Prepare Data](#load-and-prepare-data)
-  - [Compute Correlations](#compute-correlations)
+- [Data acquisition, age-prediction, and
+  processing](#data-acquisition-age-prediction-and-processing)
+  - [Loading all needed libraries](#loading-all-needed-libraries)
+  - [Getting GEO ExpressionSet and predicted age
+    scores](#getting-geo-expressionset-and-predicted-age-scores)
+  - [Reshaping to long format and cleaning the
+    metadata](#reshaping-to-long-format-and-cleaning-the-metadata)
+  - [Adding initial time points](#adding-initial-time-points)
+- [Results](#results)
+  - [Computing correlations](#computing-correlations)
   - [Visualization](#visualization)
 
 # Introduction
 
 This document provides an example analysis using Pasta on dataset
-[**GSE149694**](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694)
-from Liu & Polo (2020, *Nature*). The study, titled *“Reprogramming
-roadmap reveals route to human induced trophoblast stem cells”*, is
-available online at
-[Nature](https://www.nature.com/articles/s41586-020-2734-6) and via
-[HRPI](http://hrpi.ddnetbio.com/).
+**GSE149694** from Liu & Polo, *Nature*, 2020. The study, titled
+*“Reprogramming roadmap reveals route to human induced trophoblast stem
+cells”*, is available online at
+[GEO]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694)),
+[Nature](https://www.nature.com/articles/s41586-020-2734-6), and on the
+[HRPI website](http://hrpi.ddnetbio.com/).
 
-# Data Acquisition and Processing
+# Data acquisition, age-prediction, and processing
 
 In this section, we download the GEO ExpressionSet, obtain phenotype
 data with age scores, and perform some data wrangling. The following
 code executes the complete workflow using the Pasta functions.
 
-## Get GEO ExpressionSet and Age Scores
+## Loading all needed libraries
+
+## Getting GEO ExpressionSet and predicted age scores
 
 ``` r
-# Download ExpressionSet for GSE149694
-ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
-```
+file_LiuPolo2020 = 'output/ES_LiuPolo2020.rds'
+if(!file.exists(file_LiuPolo2020)){
+  dir.create('output', showWarnings = F)
+  # Download ExpressionSet for GSE149694
+  ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+  saveRDS(ES, file_LiuPolo2020)
+}
 
-    ## Features  Samples 
-    ##     8113       32
-
-``` r
+ES = readRDS(file_LiuPolo2020)
 # Obtain phenotype data with age predictions
 pdata <- getting_pdata_with_age_scores(ES)
 # Subset phenotype data for plotting
 pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 ```
 
-## Reshape and Clean the Data
+## Reshaping to long format and cleaning the metadata
 
 Here we reshape the data and extract information such as condition,
 time, and replicate details from the title.
@@ -58,13 +63,12 @@ dt[, title := NULL]
 dt[, time1 := as.integer(time)]
 ```
 
-# Advanced Processing for Liu & Polo 2020 Data
+## Adding initial time points
 
-The following section demonstrates additional processing steps. We
-adjust the fibroblast and non-fibroblast conditions and reassign time
-values. Finally, we compute correlations and create plots.
-
-## Load and Prepare Data
+The initial time points (Fibroblast, day 3 and 7) is the same between
+all conditions (‘NHSM’, ‘5iLAF’, ‘Primed’, ‘t2iLGoY’, ‘RSeT’). missing
+for all samples. We add this time point to each condition so we can then
+compute correlation.
 
 ``` r
 dt_pasta <- dt[model_type == 'PASTA']
@@ -112,7 +116,9 @@ unique(dt_liuPolo[, c('condition', 'time', 'time1')])[order(condition, time1)]
     ## 22:   t2iLGoY    D21    21
     ##     condition   time time1
 
-## Compute Correlations
+# Results
+
+## Computing correlations
 
 We calculate both Pearson and Spearman correlations between predicted
 age scores and the true time values.

@@ -32,10 +32,20 @@ Other packages that should be installed to run all tutorials include data.table,
 
 ## Quick start
 
-Predicting age from a GEO Series id.
- - Predicting age from a GEO Series id: [tutorial](doc/tutorials/Liu_Polo_2020.md), [script](doc/scripts/Liu_Polo_2020.R)  
-In this case example we analyze a reprogramming bulk RNA-Seq timecourse dataset (LiuPolo2020).
- - Another...
+Predicting age from a GEO Series id.  
+
+ - Example 1. Predicting age from a GEO Series id: [tutorial](doc/tutorials/Liu_Polo_2020.md), [script](doc/scripts/Liu_Polo_2020.R)  
+In this example, we analyze a reprogramming bulk RNA-Seq timecourse dataset (Liu&Polo, 2020).  
+
+ - Example 2. Predicting age for a GEO Series id: [tutorial](doc/tutorials/Kim_2013.md), [script](doc/scripts/Kim_2013.R).
+In this example, we analyze a senescence microarray timecourse dataset (Kim 2013). We use biomaRt to convert microarrays ids to ensembl gene ids.
+
+ - Example 3. Predicting age from a count matrix: [tutorial](doc/tutorials/Liu_Polo_2020.md), [script](doc/scripts/Liu_Polo_2020.R).
+
+ - Example 3. Predicting age for a Seurat object: [tutorial](doc/tutorials/Liu_Polo_2020.md), [script](doc/scripts/Liu_Polo_2020.R).
+
+ 
+
 
 
 ## Example with a GEO dataset
