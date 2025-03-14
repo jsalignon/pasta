@@ -27,8 +27,15 @@ install.packages("magrittr")
 devtools::install_git("git@github.com:jsalignon/jsutil.git", upgrade = "never")
 ```
 
-## Example with a custom count matrix
+Other packages that should be installed to run all tutorials include data.table, ggplot2, gtools.
 
+
+## Quick start
+
+Predicting age from a GEO Series id.
+ - Predicting age from a GEO Series id: [tutorial](doc/Liu_Polo_2020.md), [script](scripts/Liu_Polo_2020.R)
+In this case example we analyze a reprogramming bulk RNA-Seq timecourse dataset (LiuPolo2020).
+ - Another...
 
 
 ## Example with a GEO dataset

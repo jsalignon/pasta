@@ -7,6 +7,4 @@
 
 source('doc/render_md.R')
 
-rmarkdown::render('doc/Liu_Polo_2020.Rmd')
-
-
+rmarkdown::render('doc/Rmd/Liu_Polo_2020.Rmd', output_dir = 'doc/tutorials')
