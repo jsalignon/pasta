@@ -170,4 +170,4 @@ p_LiuPolo2020 <- ggplot(dt_liuPolo, aes(x = time, y = age_score)) +
 print(p_LiuPolo2020)
 ```
 
-![](/raid/jersal/workspace/pasta/doc/tutorials/Liu_Polo_2020_files/figure-gfm/plot-timecourse-1.png)<!-- -->
+![](Liu_Polo_2020_files/figure-gfm/plot-timecourse-1.png)<!-- -->
