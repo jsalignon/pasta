@@ -1,0 +1,128 @@
+
+---
+title: "Pasta Example Analysis: Liu Polo 2020"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output_file: "doc/Liu_Polo_2020.md"
+output:
+ custom_md_document:
+  variant: gfm
+  toc: true
+---
+
+
+# Introduction
+
+This document provides an example analysis using Pasta on dataset **GSE149694** from Liu & Polo (2020, *Nature*). The study, titled _"Reprogramming roadmap reveals route to human induced trophoblast stem cells"_, is available online at [Nature](https://www.nature.com/articles/s41586-020-2734-6) and via [HRPI](http://hrpi.ddnetbio.com/).
+
+# Data Acquisition and Processing
+
+In this section, we download the GEO ExpressionSet, obtain phenotype data with age scores, and perform some data wrangling. The following code executes the complete workflow using the Pasta functions.
+
+```{r setup, include=FALSE}
+library(magrittr)
+library(data.table)
+library(ggplot2)
+library(jsutil)
+library(gtools)  # for mixedsort
+# Load the Pasta package and any additional required functions
+library(pasta)
+```
+
+## Get GEO ExpressionSet and Age Scores
+
+```{r get-ES, message=FALSE, warning=FALSE}
+# Download ExpressionSet for GSE149694
+ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+# Obtain phenotype data with age predictions
+pdata <- getting_pdata_with_age_scores(ES)
+# Subset phenotype data for plotting
+pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
+```
+
+## Reshape and Clean the Data
+
+Here we reshape the data and extract information such as condition, time, and replicate details from the title.
+
+```{r reshape-data, message=FALSE, warning=FALSE}
+dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
+dt[, title := gsub('RNA-seq_', '', title)]
+dt[, condition := gsub('-.*', '', title)]
+dt[, time := gsub('.*-(.*)_rep.*', '\\1', title)]
+dt[, time := factor(time, levels = gtools::mixedsort(unique(dt$time)))]
+dt[, rep := gsub('.*rep', '', title)]
+dt[, title := NULL]
+dt[, time1 := as.integer(time)]
+```
+
+# Advanced Processing for Liu & Polo 2020 Data
+
+The following section demonstrates additional processing steps. We adjust the fibroblast and non-fibroblast conditions and reassign time values. Finally, we compute correlations and create plots.
+
+## Load and Prepare Data
+
+```{r load-adjust-data, message=FALSE, warning=FALSE}
+dt_pasta <- dt[model_type == 'PASTA']
+
+# Separate fibroblast and non-fibroblast data
+dt_fibro <- dt_pasta[condition == 'Fibroblast']
+dt_liuPolo <- dt_pasta[condition != 'Fibroblast']
+
+# For each non-fibroblast condition, append a copy of the fibroblast data with the condition overwritten
+for(condition1 in unique(dt_liuPolo$condition)){
+  dt_fibro1 <- copy(dt_fibro)[, condition := condition1]
+  dt_liuPolo <- rbind(dt_liuPolo, dt_fibro1)
+}
+
+# Reformat time variables
+dt_liuPolo[, time1 := time %>% gsub('D', '', .) %>% gsub('P3', '30', .) %>% 
+  gsub('P10', '30', .) %>% as.integer]
+dt_liuPolo[, time0 := as.integer(time)]
+dt_liuPolo[time == 'P10', time0 := 5]
+# Display unique condition and time mappings
+unique(dt_liuPolo[, c('condition', 'time', 'time0', 'time1')])[order(condition, time0)]
+```
+
+## Compute Correlations
+
+We calculate both Pearson and Spearman correlations between predicted age scores and the true time values.
+
+```{r compute-correlations, message=FALSE, warning=FALSE}
+dt_cor <- dt_liuPolo[, .(
+  PCC = cor(age_score, time0, method = 'pearson'), 
+  SCC = cor(age_score, time0, method = 'spearman')
+), by = c('model_type', 'condition')][order(SCC)]
+print(dt_cor)
+```
+
+## Visualization
+
+Finally, we visualize the correlation data and the timecourse of the age predictions.
+
+```{r plot-timecourse, message=FALSE, warning=FALSE}
+# Plot predicted age scores over time for the Liu & Polo dataset
+p_LiuPolo2020 <- ggplot(dt_liuPolo, aes(x = time, y = age_score)) + 
+  geom_point(size = 1, alpha = 0.7) +
+  ggtitle('Reprogramming Timecourse') +
+  theme_minimal()  # Replace with your custom theme if available
+
+print(p_LiuPolo2020)
+```
+
+## Correlation Summary
+
+We can also display overall correlation values.
+
+```{r overall-correlation, message=FALSE, warning=FALSE}
+cat("Pearson correlation between time1 and age_score:",
+    cor(dt_liuPolo$time1, dt_liuPolo$age_score), "\n")
+cat("Spearman correlation between time1 and age_score:",
+    cor(dt_liuPolo$time1, dt_liuPolo$age_score, method = 'spearman'), "\n")
+```
+
+# Conclusion
+
+This document demonstrates how to use Pasta to process GEO datasets (here GSE149694) and predict cellular age scores. The workflow includes data acquisition, reshaping, correlation analysis, and visualization of results.
+
+Feel free to modify the paths, themes, or parameters to suit your analysis needs.
+
