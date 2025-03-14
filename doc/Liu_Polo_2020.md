@@ -151,7 +151,7 @@ p_LiuPolo2020 <- ggplot(dt_liuPolo, aes(x = time, y = age_score)) +
 print(p_LiuPolo2020)
 ```
 
-![](doc/Liu_Polo_2020_files/figure-gfm/plot-timecourse-1.png)<!-- -->
+![](Liu_Polo_2020_files/figure-gfm/plot-timecourse-1.png)<!-- -->
 
 ## Correlation Summary
 

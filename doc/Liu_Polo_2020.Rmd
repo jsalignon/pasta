@@ -5,7 +5,7 @@ author: "Your Name"
 date: "`r Sys.Date()`"
 output_file: "doc/Liu_Polo_2020.md"
 output:
- custom_md_document:
+ md_document:
   variant: gfm
   toc: true
 ---
