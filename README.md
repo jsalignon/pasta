@@ -33,7 +33,7 @@ Other packages that should be installed to run all tutorials include data.table,
 ## Quick start
 
 Predicting age from a GEO Series id.
- - Predicting age from a GEO Series id: [tutorial](doc/Liu_Polo_2020.md), [script](scripts/Liu_Polo_2020.R)
+ - Predicting age from a GEO Series id: [tutorial](doc/tutorials/Liu_Polo_2020.md), [script](doc/scripts/Liu_Polo_2020.R)  
 In this case example we analyze a reprogramming bulk RNA-Seq timecourse dataset (LiuPolo2020).
  - Another...
 
