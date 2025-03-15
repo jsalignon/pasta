@@ -144,6 +144,7 @@ predicting_age_multiple_chunks <- function(seu, v_chunk_sizes = c(500, 1000),
   REG = TRUE, PASTA = TRUE, CT46 = TRUE, verbose = TRUE){
   pdata_big = purrr::map(v_chunk_sizes, 
     ~making_pseudobulks_and_predict_age(seu, .x, 
-      REG = REG, PASTA = PASTA, CT46 = CT46)) %>% do.call(rbind, .)
+      REG = REG, PASTA = PASTA, CT46 = CT46, verbose = verbose)) %>% 
+    do.call(rbind, .)
   return(pdata_big)
 }
