@@ -42,32 +42,11 @@ data(seu_gabitto_2024_L5_ET_MTG_neuron)
 seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
 ```
 
-    ## [1] 36412  2590
+    ## [1] 36412  1392
 
 ``` r
 rm(seu_gabitto_2024_L5_ET_MTG_neuron)
 ```
-
-Filtering samples: removing 930 dementia patients, 175 10x multiome
-samples, and 63 samples with missing age.
-
-``` r
-seu = seu[, seu$disease == 'normal'] %T>% pncol
-```
-
-    ## [1] 1630
-
-``` r
-seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
-```
-
-    ## [1] 1455
-
-``` r
-seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
-```
-
-    ## [1] 1392
 
 ## Processing the Metadata
 

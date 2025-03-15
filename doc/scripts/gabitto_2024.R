@@ -26,25 +26,9 @@ data(seu_gabitto_2024_L5_ET_MTG_neuron)
 seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
 rm(seu_gabitto_2024_L5_ET_MTG_neuron)
 
-# -------------------------------
-# 2. Filtering Samples
-# -------------------------------
-# Filtering samples: removing 930 dementia patients, 175 10x multiome samples,
-# and 63 samples with missing age.
-seu <- seu[, seu$disease == 'normal'] %T>% pncol
-seu <- seu[, seu$assay == "10x 3' v3"] %T>% pncol
-seu <- seu[, seu$development_stage != 'adult stage'] %T>% pncol
-
-data(seu_gabitto_2024_L5_ET_MTG_neuron)
-seu = seu_gabitto_2024_L5_ET_MTG_neuron
-# seu@assays$RNA$counts <- NULL
-seu@assays$RNA$data <- NULL
-seu = seu[, seu$disease == 'normal'] %T>% pncol
-seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
-seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
 
 # -------------------------------
-# 3. Processing the Metadata
+# 2. Processing the Metadata
 # -------------------------------
 # Adjust metadata: extract age and convert cell type to character.
 seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% 
@@ -64,7 +48,7 @@ cat("Preview cell type filtering (dry-run):\n")
 seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
 
 # -------------------------------
-# 4. Filtering and Creating Pseudobulk Samples
+# 3. Filtering and Creating Pseudobulk Samples
 # -------------------------------
 # Filter the Seurat object to keep only cell types with at least 500 cells.
 seu %<>% filter_cell_types_in_seu_object %T>% pdim
@@ -74,7 +58,7 @@ v_chunk_sizes <- 2^(0:10)
 dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes)
 
 # -------------------------------
-# 5. Correlation Analysis
+# 4. Correlation Analysis
 # -------------------------------
 # Compute correlations by chunk size for different modeling strategies.
 dt_cor <- dt_age_pred[, .(
@@ -96,7 +80,7 @@ cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_le
 print(cur_dt1)
 
 # -------------------------------
-# 6. Visualization
+# 5. Visualization
 # -------------------------------
 # Plot Pearson correlation coefficients (PCC) for different modeling strategies.
 p1 <- ggplot(cur_dt1, aes(x = log2(chunk_size), y = PCC, 
