@@ -79,6 +79,25 @@
 'v_genes_model'
 
 
+
+#### creating the test dataset: seu_gabitto_2024_L5_ET_MTG_neuron
+# SEA-AD: Seattle Alzheimer’s Disease Brain Cell Atlas
+# https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30
+# wget https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds
+seu = readRDS('9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds')
+object.size(seu) # 572885136 bytes
+# Filtering samples: removing 930 dementia patients, 175 10x multiome samples,
+seu = seu[, seu$disease == 'normal'] %T>% pncol
+object.size(seu) # 363434608 bytes
+seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
+object.size(seu) # 326000136 bytes
+seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
+object.size(seu) # 313914208 bytes
+seu_gabitto_2024_L5_ET_MTG_neuron = seu
+save(seu_gabitto_2024_L5_ET_MTG_neuron, 
+	file = 'data/seu_gabitto_2024_L5_ET_MTG_neuron.rda')
+
+
 # ## creating the test dataset: GSE103938
 # # -> 1 sample is missing: [1] "GSM2786649"... a control...
 # # => needed to download the file "GSE103938_GeneCounts.xlsx" to finally get the 

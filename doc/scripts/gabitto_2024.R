@@ -35,6 +35,14 @@ seu <- seu[, seu$disease == 'normal'] %T>% pncol
 seu <- seu[, seu$assay == "10x 3' v3"] %T>% pncol
 seu <- seu[, seu$development_stage != 'adult stage'] %T>% pncol
 
+data(seu_gabitto_2024_L5_ET_MTG_neuron)
+seu = seu_gabitto_2024_L5_ET_MTG_neuron
+# seu@assays$RNA$counts <- NULL
+seu@assays$RNA$data <- NULL
+seu = seu[, seu$disease == 'normal'] %T>% pncol
+seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
+seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
+
 # -------------------------------
 # 3. Processing the Metadata
 # -------------------------------
