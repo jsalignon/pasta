@@ -1,57 +1,124 @@
 
-# https://cellxgene.cziscience.com/collections/939769a8-d8d2-4d01-abfc-55699893fd49
-<!-- # wget https://datasets.cellxgene.cziscience.com/b8ac4433-b426-4e90-b0ed-52e0d7ad4e2b.rds -->
-# Horizontal cells of human eye
-# retina
-# normal
-# 10x 3' v3
-# Homo sapiens
-# 1,875
+---
+title: "Pasta Analysis Tutorial: Human Retina Horizontal Cells"
+author: "Jérôme Salignon"
+date: "`r Sys.Date()`"
+output:
+  md_document:
+    variant: gfm
+    toc: true
+---
 
+# Introduction
+
+# Introduction
+
+This tutorial demonstrates an analysis using the **Pasta** package on the dataset **GSE135133** from Orozco, *Cell Report*, 2020.  
+The study, *"Integration of eQTL and a Single-Cell Atlas in the Human Eye Identifies Causal Genes for Age-Related Macular Degeneration"*, is available at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41714), [CellxGene](https://cellxgene.cziscience.com/collections/939769a8-d8d2-4d01-abfc-55699893fd49) and [Cell Report](https://www.cell.com/cell-reports/fulltext/S2211-1247%2819%2931747-4). In particular, the dataset "Horizontal cells of human eye" of 1,875 cells was downloaded from CellxGene. 
+
+
+# Data Acquisition, Age-Prediction, and Processing
+
+In this section, we load the example Seurat object, process the metadata, filter cell types, and create pseudobulk samples for age prediction.
+
+## Loading Libraries and Dataset
+
+```{r setup, include=FALSE}
 library(magrittr)
 library(jsutil)
 library(pasta)
+```
 
-# Load example dataset
+```{r load-data, message=FALSE, warning=FALSE}
+# Load example dataset of retina horizontal cells
 data(seu_orozco_2020_retina_horizontal_cells)
-seu <- seu_orozco_2020_retina_horizontal_cells %T>% pdim # dimensions: 57,596 genes x 1875 cells
+seu <- seu_orozco_2020_retina_horizontal_cells %T>% pdim  # Dimensions: 57,596 genes x 1,875 cells
 rm(seu_orozco_2020_retina_horizontal_cells)
+```
 
-# Process the metadata
-seu$age <- seu$development_stage %>% gsub("-year.*", "", .) %>% gsub("-", " ", .)
+## Processing the Metadata
+
+We adjust the metadata to extract age information and cell type annotations.
+
+```{r process-metadata, message=FALSE, warning=FALSE}
+# Process the metadata: remove extra characters from development_stage and convert cell type to character.
+seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% gsub("-", " ", .)
 seu$type <- seu$cell_type %>% as.character
+```
 
-# Preview cell type filtering
-seu %>% filter_cell_types_in_seu_object(dry_run = TRUE, verbose = TRUE)
+Distribution of ages
+```{r process-metadata, message=FALSE, warning=FALSE}
+seu@meta.data$age %>% table
+```
 
+Distribution of cell types
+```{r process-metadata, message=FALSE, warning=FALSE}
+seu@meta.data$cell_type %>% table
+```
+
+Preview cell type filtering (dry-run)
+```{r process-metadata, message=FALSE, warning=FALSE}
+seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
+```
+
+
+## Filtering and Creating Pseudobulk Samples
+
+We filter the Seurat object to retain only cell types with at least 500 cells, and then create pseudobulk samples for age prediction.
+
+```{r filter-pseudobulk, message=FALSE, warning=FALSE}
 # Filter the Seurat object to keep only cell types with at least 500 cells
 seu %<>% filter_cell_types_in_seu_object %T>% pdim
 
-# Create pseudobulks of 5000 cells each and predict age
+# Create pseudobulk samples using a chunk size of 1000 cells
 dt_age_pred <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
-print(pdata)
+print(dt_age_pred)
 
 # Predict age using multiple pseudobulk chunk sizes
-( v_chunk_sizes = 2^(0:10) )
-dt_age_pred = predicting_age_multiple_chunks(seu, v_chunk_sizes)
+v_chunk_sizes <- 2^(0:10)
+dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes)
+```
 
-get_cor_by_chunk_from_pdata_big(dt_age_pred)
+dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes)
 
-# Plot results for the different models:
-v_model_types_lvls = c('REGR', 'TC46', 'AS40')
-model_type2 = factor(model_type1, levels = v_model_types_lvls)
+dt_age_pred[, .N, chunk_size]
 
 
-cur_dt_cor = dt_age_pred[, .(REGR = cor(age, REG), AS40 = cor(age, PASTA),
-TC46 = cor(age, CT46)), 'chunk_size']
-cur_dt1 = melt(cur_dt_cor, id.vars = 'chunk_size', variable.name = 'Modeling_strategy')
-cur_dt1$Modeling_strategy %<>% add_model_type_levels
-# print(cur_dt1$Modeling_strategy %>% levels)
-p1 = ggplot(cur_dt1, aes(x = log2(chunk_size), y = value, 
-	colour = Modeling_strategy)) +
-	scale_colour_manual(values = c('AS40' = 'red2', 'REGR' = 'dodgerblue', 
-	  'TC46' = 'forestgreen')) +
-	geom_point() + my_theme + geom_line() + ggtitle(title) +
-	ylab('PCC')
+# Results
+
+In this section, we compute correlations between the true age and predicted age scores and visualize the results.
+
+## Correlation Analysis
+
+```{r compute-correlations, message=FALSE, warning=FALSE}
+# Compute correlations by chunk size for different modeling strategies
+cur_dt_cor <- dt_age_pred[, .(REG = cor(age, REG),
+                               PASTA = cor(age, PASTA),
+                               TC46 = cor(age, CT46)), by = chunk_size]
+
+# Reshape the data into long format for plotting
+cur_dt1 <- melt(cur_dt_cor, id.vars = 'chunk_size', variable.name = 'Modeling_strategy', value.name = 'PCC')
+
+# Optionally, add or adjust factor levels for the modeling strategies
+model_levels <- c('REG', 'TC46', 'PASTA')
+cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
+print(cur_dt1)
+```
+
+## Visualization
+
+We now plot the Pearson correlation coefficients (PCC) for the different modeling strategies across chunk sizes.
+
+```{r plot-correlations, message=FALSE, warning=FALSE}
+# Plot PCC vs. log2(chunk_size) for different modeling strategies
+p1 <- ggplot(cur_dt1, aes(x = log2(chunk_size), y = PCC, colour = Modeling_strategy)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_colour_manual(values = c('PASTA' = 'red2', 'REG' = 'dodgerblue', 'TC46' = 'forestgreen')) +
+  ggtitle("Correlation between True Age and Predicted Age Scores") +
+  xlab("log2(Chunk Size)") +
+  ylab("Pearson Correlation Coefficient (PCC)") +
+  theme_minimal()
 
 print(p1)
+```

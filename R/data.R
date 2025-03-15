@@ -10,14 +10,14 @@
 "ES_GSE103938"
 
 
-#' Test dataset seu_orozco_2020_retina_horizontal_cells
+#' Test dataset seu_gabitto_2024_L5_ET_MTG_neuron
 #'
-#' The Seurat R object for seu_orozco_2020_retina_horizontal_cells obtained from CZ cellXGene. Title of the dataset on cellXGene.: "Integration of eQTL and a Single-Cell Atlas in the Human Eye Identifies Causal Genes for Age-Related Macular Degeneration". 
+#' The Seurat R object for seu_gabitto_2024_L5_ET_MTG_neuron obtained from CZ cellXGene. Title of the dataset on cellXGene.: "SEA-AD: Seattle Alzheimer’s Disease Brain Cell Atlas". 
 #'
-#' @format A data frame with 57596 genes and 1875 cells.
-#' @source The object was obtained from the supplementary file GSE103938_GeneCounts.xlsx at the link: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103938.
+#' @format A data frame with 36,412 genes and 2,590 cells.
+#' @source The object was obtained from the subset "L5 ET - MTG: Seattle Alzheimer's Disease Atlas (SEA-AD)" at the link: https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30.
 #'
-"seu_orozco_2020_retina_horizontal_cells"
+"seu_gabitto_2024_L5_ET_MTG_neuron"
 
 
 #' The regression model
