@@ -127,7 +127,7 @@ seu %<>% filter_cell_types_in_seu_object %T>% pdim
 
 # Predict age using multiple pseudobulk chunk sizes
 v_chunk_sizes <- 2^(0:10)
-dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes)
+dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 ```
 
     ##                                                                 age
@@ -321,45 +321,8 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
 # Optionally, add or adjust factor levels for the modeling strategies
 model_levels <- c('REG', 'TC46', 'PASTA')
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
-print(cur_dt1)
+# print(cur_dt1)
 ```
-
-    ##     chunk_size Modeling_strategy         PCC
-    ##          <num>            <fctr>       <num>
-    ##  1:          1               REG  0.09281530
-    ##  2:          2               REG  0.12059205
-    ##  3:          4               REG  0.20927264
-    ##  4:          8               REG  0.33911276
-    ##  5:         16               REG  0.45830445
-    ##  6:         32               REG  0.47550962
-    ##  7:         64               REG  0.64329745
-    ##  8:        128               REG  0.63195424
-    ##  9:        256               REG  0.75816830
-    ## 10:        512               REG  0.77342651
-    ## 11:       1024               REG  0.77657612
-    ## 12:          1             PASTA  0.18895648
-    ## 13:          2             PASTA  0.24780433
-    ## 14:          4             PASTA  0.37139574
-    ## 15:          8             PASTA  0.48383950
-    ## 16:         16             PASTA  0.60057410
-    ## 17:         32             PASTA  0.65348638
-    ## 18:         64             PASTA  0.75529374
-    ## 19:        128             PASTA  0.76182855
-    ## 20:        256             PASTA  0.83695041
-    ## 21:        512             PASTA  0.83993535
-    ## 22:       1024             PASTA  0.84081929
-    ## 23:          1              TC46  0.01863358
-    ## 24:          2              TC46  0.04883783
-    ## 25:          4              TC46  0.03836583
-    ## 26:          8              TC46  0.06944892
-    ## 27:         16              TC46  0.04355135
-    ## 28:         32              TC46 -0.01326929
-    ## 29:         64              TC46  0.14246422
-    ## 30:        128              TC46  0.15867524
-    ## 31:        256              TC46 -0.02586498
-    ## 32:        512              TC46  0.07893230
-    ## 33:       1024              TC46  0.05759046
-    ##     chunk_size Modeling_strategy         PCC
 
 ## Visualization
 
