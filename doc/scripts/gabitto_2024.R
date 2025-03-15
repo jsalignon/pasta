@@ -1,0 +1,105 @@
+# Tutorial for analyzing Seurat datasets with Pasta
+# ========================================================
+# This script demonstrates an analysis using the Pasta package on the dataset
+# "L5 ET - MTG" from Gabitto, Nature Neuroscience, 2024.
+#
+# The study, "Integrated multimodal cell atlas of Alzheimer’s disease", is available at:
+# - CellxGene: https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30
+# - Nature Neuroscience: https://doi.org/10.1038/s41593-024-01774-5
+#
+# In this analysis, we load an example Seurat object, process its metadata,
+# filter cell types, create pseudobulk samples for age prediction, compute correlations,
+# and visualize the results.
+#
+# Ensure that the following packages are installed:
+# magrittr, jsutil, pasta, data.table, ggplot2, gtools
+
+# -------------------------------
+# 1. Loading Libraries and Dataset
+# -------------------------------
+library(magrittr)
+library(jsutil)
+library(pasta)
+
+# Load example dataset of retina horizontal cells
+data(seu_gabitto_2024_L5_ET_MTG_neuron)
+seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
+rm(seu_gabitto_2024_L5_ET_MTG_neuron)
+
+# -------------------------------
+# 2. Filtering Samples
+# -------------------------------
+# Filtering samples: removing 930 dementia patients, 175 10x multiome samples,
+# and 63 samples with missing age.
+seu <- seu[, seu$disease == 'normal'] %T>% pncol
+seu <- seu[, seu$assay == "10x 3' v3"] %T>% pncol
+seu <- seu[, seu$development_stage != 'adult stage'] %T>% pncol
+
+# -------------------------------
+# 3. Processing the Metadata
+# -------------------------------
+# Adjust metadata: extract age and convert cell type to character.
+seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% 
+  gsub("-", " ", .) %>% gsub('80 year old and over stage', '85', .)
+seu$type <- seu$cell_type %>% as.character
+
+# Distribution of ages
+cat("Distribution of ages:\n")
+print(table(seu@meta.data$age))
+
+# Distribution of cell types
+cat("Distribution of cell types:\n")
+print(table(seu@meta.data$cell_type))
+
+# Preview cell type filtering (dry-run)
+cat("Preview cell type filtering (dry-run):\n")
+seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
+
+# -------------------------------
+# 4. Filtering and Creating Pseudobulk Samples
+# -------------------------------
+# Filter the Seurat object to keep only cell types with at least 500 cells.
+seu %<>% filter_cell_types_in_seu_object %T>% pdim
+
+# Predict age using multiple pseudobulk chunk sizes.
+v_chunk_sizes <- 2^(0:10)
+dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes)
+
+# -------------------------------
+# 5. Correlation Analysis
+# -------------------------------
+# Compute correlations by chunk size for different modeling strategies.
+dt_cor <- dt_age_pred[, .(
+  n_pseudobulks = .N,
+  REG = cor(age, REG),
+  PASTA = cor(age, PASTA),
+  TC46 = cor(age, CT46)
+), by = chunk_size]
+print(dt_cor)
+
+# Reshape the correlation data into long format for plotting.
+cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size", 
+                variable.name = "Modeling_strategy", 
+                value.name = "PCC")
+
+# Optionally, adjust factor levels for the modeling strategies.
+model_levels <- c("REG", "TC46", "PASTA")
+cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
+print(cur_dt1)
+
+# -------------------------------
+# 6. Visualization
+# -------------------------------
+# Plot Pearson correlation coefficients (PCC) for different modeling strategies.
+p1 <- ggplot(cur_dt1, aes(x = log2(chunk_size), y = PCC, 
+    colour = Modeling_strategy)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_colour_manual(values = c('PASTA' = 'red2', 
+    'REG' = 'dodgerblue', 'TC46' = 'forestgreen')) +
+  ggtitle("Correlation between True Age and Predicted Age Scores") +
+  xlab("log2(Chunk Size)") +
+  ylab("Pearson Correlation Coefficient (PCC)") +
+  theme_minimal()
+
+print(p1)
