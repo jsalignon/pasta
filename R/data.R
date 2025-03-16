@@ -10,16 +10,6 @@
 "ES_GSE103938"
 
 
-#' Test dataset seu_gabitto_2024_L5_ET_MTG_neuron
-#'
-#' The Seurat R object for seu_gabitto_2024_L5_ET_MTG_neuron obtained from CZ cellXGene. Title of the dataset on cellXGene.: "SEA-AD: Seattle Alzheimer’s Disease Brain Cell Atlas". 
-#'
-#' @format A data frame with 36,412 genes and 2,590 cells.
-#' @source The object was obtained from the subset "L5 ET - MTG: Seattle Alzheimer's Disease Atlas (SEA-AD)" at the link: https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30.
-#'
-"seu_gabitto_2024_L5_ET_MTG_neuron"
-
-
 #' The regression model
 #'
 #' @format A cv.glmnet created using the glmnet package.
@@ -79,23 +69,6 @@
 'v_genes_model'
 
 
-
-# #### creating the test dataset: seu_gabitto_2024_L5_ET_MTG_neuron
-# # SEA-AD: Seattle Alzheimer’s Disease Brain Cell Atlas
-# # https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30
-# # wget https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds
-# seu = readRDS('data/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds')
-# object.size(seu) # 572885136 bytes
-# # Filtering samples: removing 930 dementia patients, 175 10x multiome samples,
-# seu = seu[, seu$disease == 'normal'] %T>% pncol
-# object.size(seu) # 363434608 bytes
-# seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
-# object.size(seu) # 326000136 bytes
-# seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
-# object.size(seu) # 313914208 bytes
-# seu_gabitto_2024_L5_ET_MTG_neuron = seu
-# save(seu_gabitto_2024_L5_ET_MTG_neuron, 
-# 	file = 'data/seu_gabitto_2024_L5_ET_MTG_neuron.rda')
 
 
 # ## creating the test dataset: GSE103938
