@@ -1,11 +1,15 @@
 
-## Welcome
+## Welcome to Pasta!
 
 **Pasta** (Predicting **A**ge-**S**hift from **T**ranscriptomic **A**nalyses) is an R package designed to predict cellular age using transcriptomic data. The tool streamlines the process of preparing transcriptomic datasets, applying pre-trained models, and generating age predictions.
 
 For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
 
----
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Examples](#examples)
+- [Citation](#citation)
+
 
 ## Installation
 
@@ -25,6 +29,8 @@ It is recommended to also install the following packages:
 
 GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
 ``` r
+library(pasta)
+library(Biobase)
 ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
 pdata = getting_pdata_with_age_scores(ES, filter_genes = F, rank_norm = F)
 ```
@@ -33,8 +39,6 @@ The function `getting_pdata_with_age_scores` predict ages.
 
 With an ExpressionSet object, one can preprocess the data and predict age-effects in a single line:
 ``` r
-library(pasta)
-library(Biobase)
 data(ES_GSE103938)
 pdata = getting_pdata_with_age_scores(ES_GSE103938, filter_genes = T, rank_norm = T)
 ```
@@ -66,7 +70,18 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = m
     ## 1:           <NA>              -3.816706              36.43337            4.762343
     ## 2: 10nM Rapamycin             -15.788035              33.73355                 NaN
     ## 3:  1nM Rapamycin              -6.103977              38.12827                 NaN
-In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence).
+In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence). Please note that PASTA predicts only relative age, so the predicted age-effects should mainly be compared between different samples of a given study.
+
+Here are the results with the regression model:
+``` r
+print(dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mean))
+```
+
+    ##     treated_with OSKM expressing vector RAS expressing vector empty vector (MSCV)
+    ##           <char>                  <num>                 <num>               <num>
+    ##1:           <NA>               45.31800              56.65823            32.35902
+    ##2: 10nM Rapamycin               23.29410              48.67683                 NaN
+    ##3:  1nM Rapamycin               37.72791              58.28124                 NaN
 
 
 ## Examples
