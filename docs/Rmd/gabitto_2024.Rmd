@@ -108,7 +108,7 @@ seu %<>% filter_cell_types_in_seu_object %T>% pdim
 
 # Predict age using multiple pseudobulk chunk sizes
 v_chunk_sizes <- 2^(0:10)
-dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
+dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = T)
 ```
 
 
