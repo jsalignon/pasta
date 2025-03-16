@@ -1,3 +1,4 @@
+
 ## Welcome
 
 **Pasta** (Predicting **A**ge-**S**hift from **T**ranscriptomic **A**nalyses) is an R package designed to predict cellular age using transcriptomic data. The tool streamlines the process of preparing transcriptomic datasets, applying pre-trained models, and generating age predictions.
@@ -14,25 +15,63 @@ Pasta is available on GitHub. You can install it directly using `devtools`:
 devtools::install_git("git@github.com:jsalignon/pasta.git", upgrade = "never")
 ```
 
-Dependencies
 It is recommended to also install the following packages:
-
-magrittr – for piping and functional programming.
-jsutil – for additional utility functions.
-Install them as follows:
-
-```r
-install.packages("magrittr")
-# jsutil is available on GitHub as well:
-devtools::install_git("git@github.com:jsalignon/jsutil.git", upgrade = "never")
-```
-
-Other packages that should be installed to run all tutorials include data.table, ggplot2, gtools.
+ - CRAN: magrittr, data.table, ggplot2, gtools
+ - Biobase: ExpressionSet
+ - GitHub: jsalignon/jsutil
 
 
 ## Quick start
 
-Predicting age from a GEO Series id.  
+GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
+``` r
+ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+pdata = getting_pdata_with_age_scores(ES, filter_genes = F, rank_norm = F)
+```
+The function `getting_GEO_ES_for_age_model` download and preprocess the data (filter genes and do rank normalization).
+The function `getting_pdata_with_age_scores` predict ages.
+
+With an ExpressionSet object, one can preprocess the data and predict age-effects in a single line:
+``` r
+library(pasta)
+library(Biobase)
+data(ES_GSE103938)
+pdata = getting_pdata_with_age_scores(ES_GSE103938, filter_genes = T, rank_norm = T)
+```
+
+Here is how to predict age with a count matrix: 
+``` r
+mat = exprs(ES_GSE103938)
+pdata = pData(ES_GSE103938) %>% copy %>% setDT
+mat %<>% filtering_age_model_genes_and_rank_norm
+mat %<>% applying_rank_normalization
+pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, PASTA = TRUE, CT46 = TRUE)
+pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
+```
+
+    ##        title  treated_with                 vector      REG     PASTA     CT46
+    ##       <char>        <char>                 <char>    <num>     <num>    <num>
+    ## 1:  Prolif_1          <NA>    empty vector (MSCV) 45.52050  7.179945 5.182232
+    ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161 -4.438762 3.149072
+    ## 3: OSKM1nM_1 1nM Rapamycin OSKM expressing vector 36.73217 -8.277933 4.138329
+
+Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cuttoffs at <40 and >60 years, and PASTA, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
+
+``` r
+print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean))
+```
+
+    ##      treated_with OSKM expressing vector RAS expressing vector empty vector (MSCV)
+    ##            <char>                  <num>                 <num>               <num>
+    ## 1:           <NA>              -3.816706              36.43337            4.762343
+    ## 2: 10nM Rapamycin             -15.788035              33.73355                 NaN
+    ## 3:  1nM Rapamycin              -6.103977              38.12827                 NaN
+In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence).
+
+
+## Examples
+
+Here are 3 examples with tutorials and scripts illustrating how to use Pasta: 
 
  - Example 1. Predicting age from a GEO Series id: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R)  
 In this example, we analyze a reprogramming bulk RNA-Seq timecourse dataset (Liu&Polo, 2020).  
@@ -40,90 +79,8 @@ In this example, we analyze a reprogramming bulk RNA-Seq timecourse dataset (Liu
  - Example 2. Predicting age for a GEO Series id: [tutorial](docs/tutorials/Kim_2013.md), [script](docs/scripts/Kim_2013.R).
 In this example, we analyze a senescence microarray timecourse dataset (Kim 2013). We use biomaRt to convert microarrays ids to ensembl gene ids.
 
- - Example 3. Predicting age from a count matrix: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R).
+ - Example 3. Predicting age for a Seurat object: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
 
- - Example 3. Predicting age for a Seurat object: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R).
-
- 
-
-
-
-## Example with a GEO dataset
-
-Example of age prediction using only a GEO Series id. In this example, we analyze [GSE103938](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103938), with Title "Transcriptome analysis of OSKM- or RAS-induced senescent IMR90 fibroblasts treated with Rapamycin.".
-
-```r
-library(jsutil)
-library(magrittr)
-library(pasta)
-library(data.table)
-
-ES = getting_GEO_ES_for_age_model('GSE103938') %T>% pdim # 8113 8
-pdata = get_pdata_with_age_scores(ES)
-dcast(pdata, treated.with ~ vector, value.var = 'PASTA', fun.aggregate = mean)
-dcast(pdata, treated.with ~ vector, value.var = 'REG', fun.aggregate = mean)
-```
-
-Another exapmple; GSE149694
-# Liu..Polo 2020, Nature
-# Reprogramming roadmap reveals route to human induced trophoblast stem cells 
-# https://www.nature.com/articles/s41586-020-2734-6
-# http://hrpi.ddnetbio.com/ ; GSE149694
-
-```r
-ES = getting_GEO_ES_for_age_model('GSE149694') %T>% pdim # 8113 8
-pdata = getting_pdata_with_age_scores(ES)
-pdata1 = pdata[, c('title', 'PASTA', 'REG', 'CT46')]
-
-dt = melt(pdata1, id.vars = 'title', variable.name = 'model_type', 
-	value.name = 'age_score')
-dt[, title := gsub('RNA-seq_', '', title)]
-dt[, condition := gsub('-.*', '', title)]
-dt[, time := gsub('.*-(.*)_rep.*', '\\1', title)]
-dt[, time := factor(time, levels = gtools::mixedsort(unique(dt$time)))]
-dt[, rep := gsub('.*rep', '', title)]
-dt[, title := NULL]
-dt[, time1 := as.integer(time)]
-```
-
-
-
-## Example with a Seurat object
-Here’s a brief example to get you started with Pasta using a Seurat object. In this example, we load sample data, filter cell types, aggregate into pseudobulk samples, and predict age scores.
-
-```r
-library(magrittr)
-library(jsutil)
-library(pasta)
-
-# Load example dataset
-data(seu_orozco_2020_retina_horizontal_cells)
-seu <- seu_orozco_2020_retina_horizontal_cells %T>% pdim # dimensions: 57,596 genes x 1875 cells
-rm(seu_orozco_2020_retina_horizontal_cells)
-
-# Process the metadata
-seu$age <- seu$development_stage %>% gsub("-year.*", "", .) %>% gsub("-", " ", .)
-seu$type <- seu$cell_type %>% as.character
-
-# Preview cell type filtering
-seu %>% filter_cell_types_in_seu_object(dry_run = TRUE, verbose = TRUE)
-
-# Filter the Seurat object to keep only cell types with at least 500 cells
-seu %<>% filter_cell_types_in_seu_object %T>% pdim
-
-# Create pseudobulks of 1000 cells each and predict age in one step
-pdata <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
-print(pdata)
-
-# Advanced: Predict age using multiple pseudobulk chunk sizes (500 and 1000)
-pdata_big <- predicting_age_multiple_chunks(seu, v_chunk_sizes = c(500, 1000))
-print(pdata_big)
-```
-
-## Documentation
-For more detailed documentation and function reference, please check the reference manual in the repository.
-
-If you have any questions or suggestions, feel free to open an issue or contact the maintainer.
 
 ## Citation
 If you use Pasta in your research, please cite our manuscript:
