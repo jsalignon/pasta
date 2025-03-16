@@ -105,23 +105,8 @@ seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbos
 ```
 
     ##                                                                 age
-    ## type                                                              29  43  50
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  54  16  77
-    ##                                                                 age
-    ## type                                                              60  72  75
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron 161  11  26
-    ##                                                                 age
-    ## type                                                              78  80  81
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  36  74  22
-    ##                                                                 age
-    ## type                                                              82  83  84
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  72  91   7
-    ##                                                                 age
-    ## type                                                              85  86  87
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron 583  46  48
-    ##                                                                 age
-    ## type                                                              88  89
-    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  41  27
+    ## type                                                              29  43  50  60  72  75  78  80  81  82  83  84  85  86  87  88  89
+    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  54  16  77 161  11  26  36  74  22  72  91   7 583  46  48  41  27
 
 =\> This function allows to remove cell types without a given number of
 cells.
@@ -144,7 +129,7 @@ seu %<>% filter_cell_types_in_seu_object %T>% pdim
 # => faster if needed
 
 # Predict age using multiple pseudobulk chunk sizes
-v_chunk_sizes <- 2^(0:10)
+v_chunk_sizes <- 2^(0:9)
 dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 ```
 
@@ -177,7 +162,6 @@ print(dt_cor)
     ##  8:        128            27 0.6319542 0.7618285  0.15867524
     ##  9:        256            20 0.7581683 0.8369504 -0.02586498
     ## 10:        512            18 0.7734265 0.8399354  0.07893230
-    ## 11:       1024            18 0.7765761 0.8408193  0.05759046
 
 ``` r
 # Reshape the data into long format for plotting
@@ -185,7 +169,6 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 
-# Optionally, add or adjust factor levels for the modeling strategies
 model_levels <- c('REG', 'TC46', 'PASTA')
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
 # print(cur_dt1)

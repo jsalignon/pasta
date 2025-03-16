@@ -54,7 +54,7 @@ seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbos
 seu %<>% filter_cell_types_in_seu_object %T>% pdim
 
 # Predict age using multiple pseudobulk chunk sizes.
-v_chunk_sizes <- 2^(0:10)
+v_chunk_sizes <- 2^(0:9)
 dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 
 # -------------------------------
@@ -74,7 +74,6 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 
-# Optionally, adjust factor levels for the modeling strategies.
 model_levels <- c("REG", "TC46", "PASTA")
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
 # print(cur_dt1)

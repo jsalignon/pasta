@@ -116,11 +116,3 @@ p_LiuPolo2020 <- ggplot(dt_liuPolo, aes(x = time, y = age_score)) +
 
 print(p_LiuPolo2020)
 
-
-# =============================================================================
-# Conclusion
-# =============================================================================
-
-# This script demonstrates how to use Pasta to process GEO datasets (GSE149694)
-# and predict cellular age scores. The workflow includes data acquisition, reshaping,
-# correlation analysis, and visualization of results.
