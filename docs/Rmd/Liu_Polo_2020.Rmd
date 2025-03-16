@@ -27,15 +27,19 @@ library(data.table)
 library(ggplot2)
 library(gtools)
 library(jsutil)
+
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
 ```
 
 ## Getting GEO ExpressionSet and predicted age scores
 
 ```{r get-ES, message=FALSE, warning=FALSE}
 
-file_LiuPolo2020 = 'output/ES_LiuPolo2020.rds'
+file_LiuPolo2020 = '../output/ES_LiuPolo2020.rds'
 if(!file.exists(file_LiuPolo2020)){
-  dir.create('output', showWarnings = F)
   # Download ExpressionSet for GSE149694
   ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
   saveRDS(ES, file_LiuPolo2020)

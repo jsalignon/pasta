@@ -36,14 +36,20 @@ library(ggplot2)
 library(gtools)
 library(GEOquery)
 library(biomaRt)
+
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
+
 ```
 
 ## Getting GEO ExpressionSet
 
 ```{r load-ES, message=FALSE, warning=FALSE}
-file_Kim2013 = 'output/ES_Kim2013.rds'
+file_Kim2013 = '../output/ES_Kim2013.rds'
 if(!file.exists(file_Kim2013)){
-  dir.create('output', showWarnings = F)
+  dir.create('../output', showWarnings = F)
   # Load the ExpressionSet for GSE41714 using GEOquery
   ES <- getGEO('GSE41714', GSEMatrix = TRUE, getGPL = FALSE)[[1]]
   # Extract the expression matrix and display dimensions
@@ -56,7 +62,7 @@ if(!file.exists(file_Kim2013)){
 In this section, we use **biomaRt** to query Ensembl and convert Illumina HumanHT-12 V4 probe IDs to Ensembl gene IDs.
 
 ```{r biomaRt-conversion, message=FALSE, warning=FALSE}
-file_humanht12v4 = 'output/dt_ids__humanht_12_v4.rds'
+file_humanht12v4 = '../output/dt_ids__humanht_12_v4.rds'
 
 if(!file.exists(file_humanht12v4)){
   

@@ -25,23 +25,52 @@ In this section, we load the example Seurat object, process the metadata, filter
 
 Loading libraries.
 ```{r setup, include=FALSE}
-library(magrittr)
-library(jsutil)
 library(pasta)
+library(jsutil)
+library(magrittr)
+library(data.table)
+library(ggplot2)
+
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
 ```
 
-Loading data
-```{r load-data, message=FALSE, warning=FALSE}
-data(seu_gabitto_2024_L5_ET_MTG_neuron)
-seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
-rm(seu_gabitto_2024_L5_ET_MTG_neuron)
+Downloading data
+```{r download-data, message=FALSE, warning=FALSE}
+file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
+if(!file.exists(file_Gabitto2024)){
+  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
+}
 ```
+
+Filtering data to keep only cells from healthy donors with known age and made with the 10X 3' method.
+```{r filtering-data, message=FALSE, warning=FALSE}
+file_Gabitto2024_filtered = '../output/seu_gabitto_2024_filtered.rds'
+if(!file.exists(file_Gabitto2024_filtered)){
+  seu = readRDS(file_Gabitto2024)
+  object.size(seu) # 572885136 bytes
+  # Removing samples: removing 930 dementia patients
+  seu = seu[, seu$disease == 'normal'] %T>% pncol
+  object.size(seu) # 363434608 bytes
+  # Removing 175 10x multiome samples,
+  seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
+  object.size(seu) # 326000136 bytes
+  # Removing 63 samples from donors or unknown age,
+  seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
+  object.size(seu) # 313914208 bytes
+  saveRDS(seu, file_Gabitto2024_filtered)
+}
+```
+
 
 ## Processing the Metadata
 
 We adjust the metadata to extract age information and cell type annotations.
 
 ```{r process-metadata, message=FALSE, warning=FALSE}
+seu = readRDS(file_Gabitto2024_filtered)
 # Process the metadata: remove extra characters from development_stage and convert cell type to character.
 seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% 
   gsub("-", " ", .) %>% gsub('80 year old and over stage', '85', .)

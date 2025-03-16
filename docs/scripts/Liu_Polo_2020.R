@@ -17,14 +17,24 @@ library(data.table)
 library(ggplot2)
 library(gtools)
 
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
 
 # =============================================================================
 # Data Acquisition and Processing
 # =============================================================================
 
 # Get GEO ExpressionSet and Age Scores
+
 # Download ExpressionSet for GSE149694; expect dimensions: 8113 x 8
-ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim
+file_LiuPolo2020 = '../output/ES_LiuPolo2020.rds'
+if(!file.exists(file_LiuPolo2020)){
+  # Download ExpressionSet for GSE149694
+  ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+  saveRDS(ES, file_LiuPolo2020)
+}
 
 # Obtain phenotype data with age predictions and subset for plotting
 pdata <- getting_pdata_with_age_scores(ES)

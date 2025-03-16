@@ -35,17 +35,34 @@ prediction.
 
 Loading libraries.
 
-Loading data
+Downloading data
 
 ``` r
-data(seu_gabitto_2024_L5_ET_MTG_neuron)
-seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
+file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
+if(!file.exists(file_Gabitto2024)){
+  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
+}
 ```
 
-    ## [1] 36412  1392
+Filtering data to keep only cells from healthy donors with known age and
+made with the 10X 3’ method.
 
 ``` r
-rm(seu_gabitto_2024_L5_ET_MTG_neuron)
+file_Gabitto2024_filtered = '../output/seu_gabitto_2024_filtered.rds'
+if(!file.exists(file_Gabitto2024_filtered)){
+  seu = readRDS(file_Gabitto2024)
+  object.size(seu) # 572885136 bytes
+  # Removing samples: removing 930 dementia patients
+  seu = seu[, seu$disease == 'normal'] %T>% pncol
+  object.size(seu) # 363434608 bytes
+  # Removing 175 10x multiome samples,
+  seu = seu[, seu$assay == '10x 3\' v3'] %T>% pncol
+  object.size(seu) # 326000136 bytes
+  # Removing 63 samples from donors or unknown age,
+  seu = seu[, seu$development_stage != 'adult stage'] %T>% pncol
+  object.size(seu) # 313914208 bytes
+  saveRDS(seu, file_Gabitto2024_filtered)
+}
 ```
 
 ## Processing the Metadata
@@ -54,6 +71,7 @@ We adjust the metadata to extract age information and cell type
 annotations.
 
 ``` r
+seu = readRDS(file_Gabitto2024_filtered)
 # Process the metadata: remove extra characters from development_stage and convert cell type to character.
 seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% 
   gsub("-", " ", .) %>% gsub('80 year old and over stage', '85', .)

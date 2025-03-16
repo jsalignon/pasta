@@ -5,7 +5,7 @@
 
 # note: render each file from a fresh R session
 
-source('doc/render_md.R')
+source('docs/render_md.R')
 
 render_Rmd_from_prefix('Liu_Polo_2020')
 render_Rmd_from_prefix('Kim_2013')

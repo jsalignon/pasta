@@ -26,12 +26,12 @@ library(biomaRt)
 # -------------------------------
 # Define Output Files
 # -------------------------------
-file_Kim2013 <- 'output/ES_Kim2013.rds'
-file_humanht12v4 <- 'output/dt_ids__humanht_12_v4.rds'
+file_Kim2013 <- '../output/ES_Kim2013.rds'
+file_humanht12v4 <- '../output/dt_ids__humanht_12_v4.rds'
 
 # Create output directory if needed
-if (!dir.exists("output")) {
-  dir.create("output", showWarnings = FALSE, recursive = TRUE)
+if (!dir.exists("../output")) {
+  dir.create("../output", showWarnings = FALSE, recursive = TRUE)
 }
 
 # -------------------------------
