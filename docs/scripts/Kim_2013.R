@@ -92,8 +92,8 @@ mat <- exprs(ES)
 
 # Rename rows in the expression matrix using the conversion table
 # and filter genes using the Pasta pipeline
-mat1 <- renaming_rows_in_mat_after_gene_id_conversion(mat, dt_ids) %T>% pdim
-mat2 <- filtering_age_model_genes_and_rank_norm(mat1) %T>% pdim  # Expected dimensions: 8113 x 12
+mat1 <- renaming_rows_in_mat_after_gene_id_conversion(mat, dt_ids) %T>% pdim # 23,680 genes, 12 samples
+mat2 <- filtering_age_model_genes_and_rank_norm(mat1) %T>% pdim   # 8,113 genes x 12 samples
 
 # Extract phenotype data; assume population doubling info is in column 31
 pdata <- pData(ES) %>% setDT
@@ -118,8 +118,8 @@ print(all.equal(as.numeric(pdata1$population_doubling[1:11]),
 
 # Predicting age-effects and adding these to the metadata table
 pdata1 <- copy(dt_beta_gal)
-pdata1 %<>% adding_age_preds_to_pdata(t(mat2), CT46 = TRUE)
-print(dim(pdata1))
+pdata1 %<>% adding_age_preds_to_pdata(t(mat2), CT46 = TRUE) %T>% pdim # 12 samples, 8 columns
+print(pdata1)
 
 
 # -------------------------------
