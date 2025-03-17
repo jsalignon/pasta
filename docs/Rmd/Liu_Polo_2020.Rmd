@@ -1,13 +1,16 @@
 
 ---
-title: "Tutorial for analyzing GEO bulk RNA-Seq datasets with Pasta"
-author: "Jérôme Salignon"
-date: "`r Sys.Date()`"
 output:
  md_document:
   variant: gfm
   toc: true
 ---
+
+
+# Tutorial for analyzing GEO bulk RNA-Seq datasets with Pasta  
+
+**Author:** Jérôme Salignon  
+**Date:** `r Sys.Date()`  
 
 
 # Introduction

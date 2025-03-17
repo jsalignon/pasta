@@ -1,3 +1,5 @@
+- [Tutorial for analyzing Seurat datasets with
+  Pasta](#tutorial-for-analyzing-seurat-datasets-with-pasta)
 - [Introduction](#introduction)
 - [Data Acquisition, Age-Prediction, and
   Processing](#data-acquisition-age-prediction-and-processing)
@@ -10,6 +12,11 @@
 - [Results](#results)
   - [Correlation Analysis](#correlation-analysis)
   - [Visualization](#visualization)
+
+# Tutorial for analyzing Seurat datasets with Pasta
+
+**Author:** Jérôme Salignon  
+**Date:** 2025-03-17
 
 # Introduction
 

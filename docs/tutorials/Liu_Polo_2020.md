@@ -1,3 +1,5 @@
+- [Tutorial for analyzing GEO bulk RNA-Seq datasets with
+  Pasta](#tutorial-for-analyzing-geo-bulk-rna-seq-datasets-with-pasta)
 - [Introduction](#introduction)
 - [Data acquisition, age-prediction, and
   processing](#data-acquisition-age-prediction-and-processing)
@@ -10,6 +12,11 @@
 - [Results](#results)
   - [Computing correlations](#computing-correlations)
   - [Visualization](#visualization)
+
+# Tutorial for analyzing GEO bulk RNA-Seq datasets with Pasta
+
+**Author:** Jérôme Salignon  
+**Date:** 2025-03-17
 
 # Introduction
 

@@ -1,13 +1,17 @@
 
 ---
-title: "Script for analyzing Seurat datasets with Pasta"
-author: "Jérôme Salignon"
-date: "`r Sys.Date()`"
 output:
   md_document:
     variant: gfm
     toc: true
 ---
+
+
+# Tutorial for analyzing Seurat datasets with Pasta
+
+**Author:** Jérôme Salignon  
+**Date:** `r Sys.Date()`  
+
 
 # Introduction
 
