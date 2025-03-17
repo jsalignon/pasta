@@ -32,17 +32,14 @@ if (!dir.exists("../output")) {
 
 # Getting GEO ExpressionSet and predict age scores
 
-# Download ExpressionSet for GSE149694; expect dimensions: 8113 x 8
 file_LiuPolo2020 = '../output/ES_LiuPolo2020.rds'
 if(!file.exists(file_LiuPolo2020)){
-  # Download ExpressionSet for GSE149694
-  ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
+  ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim
+  # Dimensions: 8113 genes x 32 samples
   saveRDS(ES, file_LiuPolo2020)
 }
 
-# Obtain phenotype data with age predictions and subset for plotting
 pdata <- getting_pdata_with_age_scores(ES)
-pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 
 
 # =============================================================================
@@ -50,6 +47,7 @@ pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 # =============================================================================
 
 # Reshape data and extract condition, time, and replicate information from the title.
+pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
 dt[, title := gsub('RNA-seq_', '', title)]
 dt[, condition := gsub('-.*', '', title)]
