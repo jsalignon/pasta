@@ -5,7 +5,7 @@
 
 <img src="/docs/images/pasta_logo.png" width="400" />
 
-Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [License](#license)
+Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [Licence](#licence)
 
 
 ## Installation
@@ -102,4 +102,4 @@ If you use Pasta in your research, please cite our manuscript:
 
 
 ## Licence
-**Licence**: This source code is released under the MIT license, included [here](LICENCE.md).
+**Licence**: This source code is released under the MIT licence, included [here](LICENCE.md).
