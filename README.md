@@ -1,5 +1,5 @@
 
-<img src="/docs/images/pasta_logo.png" width="100" />
+<img src="/docs/images/pasta_logo.png" width="400" />
 
 ## Welcome to Pasta!
 
