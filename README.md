@@ -5,10 +5,7 @@
 
 <img src="/docs/images/pasta_logo.png" width="400" />
 
-- [Installation](#installation)
-- [Quick start](#quick-start)
-- [Examples](#examples)
-- [Citation](#citation)
+Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation)
 
 
 ## Installation
