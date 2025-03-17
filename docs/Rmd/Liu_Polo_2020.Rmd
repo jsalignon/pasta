@@ -20,7 +20,7 @@ In this section, we download the GEO ExpressionSet, obtain phenotype data, and p
 
 ## Loading libraries
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(pasta)
 library(magrittr)
 library(data.table)

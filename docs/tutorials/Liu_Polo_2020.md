@@ -28,6 +28,20 @@ data, and predict age scores.
 
 ## Loading libraries
 
+``` r
+library(pasta)
+library(magrittr)
+library(data.table)
+library(ggplot2)
+library(gtools)
+library(jsutil)
+
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
+```
+
 ## Getting GEO ExpressionSet and predict age scores
 
 ``` r
