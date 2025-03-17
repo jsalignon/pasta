@@ -101,7 +101,7 @@ pdata1 <- pdata[, 31] %>% set_colnames('population_doubling')
 
 
 # -------------------------------
-# Creating metadata and predict Ages
+# Creating metadata and predict ages
 # -------------------------------
 # Define a table with metadata information
 dt_beta_gal <- data.table(
@@ -125,7 +125,6 @@ print(pdata1)
 # -------------------------------
 # Reshaping to Long Format for Correlation Analysis
 # -------------------------------
-# Here we use the column names from dt_beta_gal as identifier variables.
 pdata1_long <- melt(pdata1, id.vars = names(dt_beta_gal), 
   variable.name = 'model_type')
 pdata1_long <- pdata1_long[model_type == 'PASTA']
