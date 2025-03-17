@@ -1,7 +1,7 @@
 
 ## Welcome to Pasta!
 
-**Pasta** (P̲redicting A̲ge-S̲hift from T̲ranscriptomic A̲nalyses) is an R package designed to predict cellular age-effects using various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
+**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
 
 <img src="/docs/images/pasta_logo.png" width="400" />
 
