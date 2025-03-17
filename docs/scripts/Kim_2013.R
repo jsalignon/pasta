@@ -24,6 +24,7 @@ library(ggplot2)
 library(gtools)
 library(GEOquery)
 library(biomaRt)
+# You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), `BiocManager::install()` for bioconductor packages (`GEOquery`, `biomaRt`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
 
 # -------------------------------

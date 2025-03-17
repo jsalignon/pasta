@@ -11,8 +11,6 @@ output:
 
 # Introduction
 
-# Introduction
-
 This tutorial demonstrates an analysis using the **Pasta** package on the dataset **L5 ET - MTG** from Gabitto, *Nature Neuroscience*, 2024.  
 The study, *"Integrated multimodal cell atlas of Alzheimer’s disease"*, is available at [CellxGene](https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30) and [Nature Neuroscience](https://doi.org/10.1038/s41593-024-01774-5). In particular, the dataset "L5 ET - MTG: Seattle Alzheimer's Disease Atlas (SEA-AD)" of 2,590 cells was downloaded from CellxGene. These cells corresponds to Layer 5 extratelencephalic cortical neurons in the middle temporal gyrus. 
 
@@ -21,23 +19,24 @@ The study, *"Integrated multimodal cell atlas of Alzheimer’s disease"*, is ava
 
 In this section, we load the example Seurat object, process the metadata, filter cell types, and create pseudobulk samples for age prediction.
 
-## Loading Libraries and Dataset
+## Loading libraries
 
-Loading libraries.
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(pasta)
 library(jsutil)
 library(magrittr)
 library(data.table)
 library(ggplot2)
+library(Seurat)
 
 # Create output directory if needed
 if (!dir.exists("../output")) {
   dir.create("../output")
 }
 ```
+You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `Seurat`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
-Downloading data
+## Downloading data
 ```{r download-data, message=FALSE, warning=FALSE}
 file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
 if(!file.exists(file_Gabitto2024)){
@@ -45,6 +44,7 @@ if(!file.exists(file_Gabitto2024)){
 }
 ```
 
+## Filtering data
 Filtering data to keep only cells from healthy donors with known age and made with the 10X 3' method.
 ```{r filtering-data, message=FALSE, warning=FALSE}
 file_Gabitto2024_filtered = '../output/seu_gabitto_2024_filtered.rds'
@@ -63,7 +63,6 @@ if(!file.exists(file_Gabitto2024_filtered)){
   saveRDS(seu, file_Gabitto2024_filtered)
 }
 ```
-
 
 ## Processing the Metadata
 
@@ -87,24 +86,24 @@ Distribution of cell types
 seu@meta.data$cell_type %>% table
 ```
 
-Preview cell type filtering (dry-run)
+Preview cell type filtering
 ```{r Preview-filter, message=FALSE, warning=FALSE}
 seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
 ```
-=> This function allows to remove cell types without a given number of cells. 
 
+Keeping only cell types with at least 500 cells
+```{r Filter-cell-type, message=FALSE, warning=FALSE}
+seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
+```
+Note: in this test dataset there is a single cell type with more than 500 cells so this function has no effect.
 
-## Filtering and Creating Pseudobulk Samples
+## Creating pseudobulks and prediting their age-effects
 
 We filter the Seurat object to retain only cell types with at least 500 cells, and then create pseudobulk samples for age prediction.
 
 ```{r filter-pseudobulk, message=FALSE, warning=FALSE}
-# Filter the Seurat object to keep only cell types with at least 500 cells
-seu %<>% filter_cell_types_in_seu_object %T>% pdim
-
 # Predict age using a single chunk sizes
 # dt_age_pred <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
-# => faster if needed
 
 # Predict age using multiple pseudobulk chunk sizes
 v_chunk_sizes <- 2^(0:9)
@@ -128,7 +127,6 @@ dt_cor <- dt_age_pred[, .(
 print(dt_cor)
 ```
 
-
 ```{r reshape-correlations, message=FALSE, warning=FALSE}
 # Reshape the data into long format for plotting
 cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size", 
@@ -137,7 +135,6 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
 
 model_levels <- c('REG', 'TC46', 'PASTA')
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
-# print(cur_dt1)
 ```
 
 ## Visualization

@@ -20,6 +20,7 @@ library(magrittr)
 library(data.table)
 library(ggplot2)
 library(gtools)
+# You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
 # Create output directory if needed
 if (!dir.exists("../output")) {

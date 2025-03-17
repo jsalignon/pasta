@@ -9,13 +9,6 @@ output:
     toc: true
 ---
 
-# Dependencies
-
-Before running this tutorial, please ensure that the following packages are installed: **pasta**, **jsutil**, **magrittr**, **data.table**, **ggplot2**, **gtools**, **GEOquery**, and **biomaRt**.
-
-You can install any missing packages using `install.packages()`, `BiocManager::install()` for bioconductor packages, or `devtools::install_github()` for GitHub packages.
-
-
 # Introduction
 
 This tutorial demonstrates an analysis using the **Pasta** package on the dataset **GSE41714** from Kim, *Aging Cell*, 2013.  
@@ -42,8 +35,9 @@ library(biomaRt)
 if (!dir.exists("../output")) {
   dir.create("../output")
 }
-
 ```
+You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), `BiocManager::install()` for bioconductor packages (`GEOquery`, `biomaRt`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
+
 
 ## Getting GEO ExpressionSet
 

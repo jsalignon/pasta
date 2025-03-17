@@ -1,16 +1,15 @@
 - [Introduction](#introduction)
-- [Introduction](#introduction-1)
 - [Data Acquisition, Age-Prediction, and
   Processing](#data-acquisition-age-prediction-and-processing)
-  - [Loading Libraries and Dataset](#loading-libraries-and-dataset)
+  - [Loading libraries](#loading-libraries)
+  - [Downloading data](#downloading-data)
+  - [Filtering data](#filtering-data)
   - [Processing the Metadata](#processing-the-metadata)
-  - [Filtering and Creating Pseudobulk
-    Samples](#filtering-and-creating-pseudobulk-samples)
+  - [Creating pseudobulks and prediting their
+    age-effects](#creating-pseudobulks-and-prediting-their-age-effects)
 - [Results](#results)
   - [Correlation Analysis](#correlation-analysis)
   - [Visualization](#visualization)
-
-# Introduction
 
 # Introduction
 
@@ -31,11 +30,27 @@ In this section, we load the example Seurat object, process the
 metadata, filter cell types, and create pseudobulk samples for age
 prediction.
 
-## Loading Libraries and Dataset
+## Loading libraries
 
-Loading libraries.
+``` r
+library(pasta)
+library(jsutil)
+library(magrittr)
+library(data.table)
+library(ggplot2)
+library(Seurat)
 
-Downloading data
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
+}
+```
+
+You can install any missing packages using `install.packages()` for CRAN
+packages (`magrittr`, `data.table`, `ggplot2`, `Seurat`), or
+`devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
+
+## Downloading data
 
 ``` r
 file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
@@ -43,6 +58,8 @@ if(!file.exists(file_Gabitto2024)){
   download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
 }
 ```
+
+## Filtering data
 
 Filtering data to keep only cells from healthy donors with known age and
 made with the 10X 3’ method.
@@ -98,7 +115,7 @@ seu@meta.data$cell_type %>% table
     ## L5 extratelencephalic projecting glutamatergic cortical neuron 
     ##                                                           1392
 
-Preview cell type filtering (dry-run)
+Preview cell type filtering
 
 ``` r
 seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
@@ -108,25 +125,28 @@ seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbos
     ## type                                                              29  43  50  60  72  75  78  80  81  82  83  84  85  86  87  88  89
     ##   L5 extratelencephalic projecting glutamatergic cortical neuron  54  16  77 161  11  26  36  74  22  72  91   7 583  46  48  41  27
 
-=\> This function allows to remove cell types without a given number of
-cells.
+Keeping only cell types with at least 500 cells
 
-## Filtering and Creating Pseudobulk Samples
+``` r
+seu %>% filter_cell_types_in_seu_object(n_cell_min = 500, dry_run = TRUE, verbose = TRUE)
+```
+
+    ##                                                                 age
+    ## type                                                              29  43  50  60  72  75  78  80  81  82  83  84  85  86  87  88  89
+    ##   L5 extratelencephalic projecting glutamatergic cortical neuron  54  16  77 161  11  26  36  74  22  72  91   7 583  46  48  41  27
+
+Note: in this test dataset there is a single cell type with more than
+500 cells so this function has no effect.
+
+## Creating pseudobulks and prediting their age-effects
 
 We filter the Seurat object to retain only cell types with at least 500
 cells, and then create pseudobulk samples for age prediction.
 
 ``` r
-# Filter the Seurat object to keep only cell types with at least 500 cells
-seu %<>% filter_cell_types_in_seu_object %T>% pdim
-```
-
-    ## [1] 36412  1392
-
-``` r
 # Predict age using a single chunk sizes
 # dt_age_pred <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
-# => faster if needed
+# => This function can be used to predict for a single pseudobulk size
 
 # Predict age using multiple pseudobulk chunk sizes
 v_chunk_sizes <- 2^(0:9)
@@ -171,7 +191,6 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
 
 model_levels <- c('REG', 'TC46', 'PASTA')
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
-# print(cur_dt1)
 ```
 
 ## Visualization
