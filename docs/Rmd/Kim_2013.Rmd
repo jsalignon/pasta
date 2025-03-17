@@ -11,7 +11,7 @@ output:
 
 # Dependencies
 
-Before running this tutorial, please ensure that the following packages are installed: **pasta**, **magrittr**, **data.table**, **ggplot2**, **gtools**, **GEOquery**, and **biomaRt**.
+Before running this tutorial, please ensure that the following packages are installed: **pasta**, **jsutil**, **magrittr**, **data.table**, **ggplot2**, **gtools**, **GEOquery**, and **biomaRt**.
 
 You can install any missing packages using `install.packages()`, `BiocManager::install()` for bioconductor packages, or `devtools::install_github()` for GitHub packages.
 
@@ -26,10 +26,11 @@ The study, *"Implications of time-series gene expression profiles of replicative
 
 In this section, we load the GEO ExpressionSet, extract the expression matrix, and inspect the phenotype data.
 
-## Loading all needed libraries
+## Loading libraries
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 library(pasta)
+library(jsutil)
 library(magrittr)
 library(data.table)
 library(ggplot2)
@@ -57,7 +58,7 @@ if(!file.exists(file_Kim2013)){
 }
 ```
 
-## Gene ID conversion using biomaRt
+## Converting gene ids using biomaRt
 
 In this section, we use **biomaRt** to query Ensembl and convert Illumina HumanHT-12 V4 probe IDs to Ensembl gene IDs.
 
@@ -92,7 +93,7 @@ if(!file.exists(file_humanht12v4)){
 ```
 
 
-## Processing Expression data
+## Preparing data for age-prediction
 
 Here we update the ExpressionSet and filter genes using the pasta functions.
 
@@ -111,12 +112,13 @@ pdata1 <- pdata[, 31] %>% set_colnames('population_doubling')
 ```
 
 
-## Adding metadata and predicted ages
+## Creating metadata and predict Ages
 
-We now define a data table for beta-galactosidase measurements (a proxy for senescence) and add age predictions.
+We now define a metadata table made using Figure 1A and 1B of the [manuscript](https://onlinelibrary.wiley.com/doi/10.1111/acel.12087).
+It contains information about days, doubling time, cell passage, and beta-galactosidase measurements (a proxy for senescence).
 
 ```{r add-age-predictions, message=FALSE, warning=FALSE}
-# Define a table with doubling time and beta-gal measurements
+# Define a table with metadata information
 dt_beta_gal <- data.table(
   doubling_time  = c(2, 2, 3, 5, 7, 10, 12, 14, 15, 20, 30, 40),
   nb_of_passages = c(16, 22, 54, 67, 75, 79, 81, 83, 85, 87, 88, 89),
@@ -127,7 +129,7 @@ dt_beta_gal <- data.table(
 # Check if the doubling times match
 all.equal(as.numeric(pdata1$population_doubling[1:11]), dt_beta_gal$doubling_time[1:11])  # should be TRUE
 
-# Use dt_beta_gal as phenotype data and add age predictions
+# Predicting age-effects and adding these to the metadata table
 pdata1 <- copy(dt_beta_gal)
 pdata1 %<>% adding_age_preds_to_pdata(t(mat2), CT46 = TRUE)
 dim(pdata1)
@@ -138,11 +140,11 @@ dim(pdata1)
 
 ```{r reshape-correlation, message=FALSE, warning=FALSE}
 # Melt pdata1 into long format; using the column names of pdata1 as identifier variables
-v_ids <- names(dt_beta_gal)
-pdata1_long <- melt(pdata1, id.vars = v_ids, variable.name = 'model_type')
+pdata1_long <- melt(pdata1, id.vars = names(dt_beta_gal), 
+  variable.name = 'model_type')
 pdata1_long <- pdata1_long[model_type == 'PASTA']
 pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'),
-                      variable.name = 'outcome', value.name = 'outcome_value')
+  variable.name = 'outcome', value.name = 'outcome_value')
 ```
 
 

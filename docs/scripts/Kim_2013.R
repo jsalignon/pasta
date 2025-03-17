@@ -10,12 +10,14 @@
 #   - Visualization.
 #
 # Ensure that the following packages are installed:
-#   pasta, magrittr, data.table, ggplot2, gtools, GEOquery, biomaRt
+#   pasta, jsutil, magrittr, data.table, ggplot2, gtools, GEOquery, biomaRt
+
 
 # -------------------------------
-# Load Required Libraries
+# Loading Libraries
 # -------------------------------
 library(pasta)
+library(jsutil)
 library(magrittr)
 library(data.table)
 library(ggplot2)
@@ -23,8 +25,9 @@ library(gtools)
 library(GEOquery)
 library(biomaRt)
 
+
 # -------------------------------
-# Define Output Files
+# Defining Output Files
 # -------------------------------
 file_Kim2013 <- '../output/ES_Kim2013.rds'
 file_humanht12v4 <- '../output/dt_ids__humanht_12_v4.rds'
@@ -34,8 +37,9 @@ if (!dir.exists("../output")) {
   dir.create("../output", showWarnings = FALSE, recursive = TRUE)
 }
 
+
 # -------------------------------
-# Data Acquisition
+# Getting GEO ExpressionSet
 # -------------------------------
 if (!file.exists(file_Kim2013)) {
   # Load the ExpressionSet for GSE41714 using GEOquery
@@ -46,13 +50,9 @@ if (!file.exists(file_Kim2013)) {
   ES <- readRDS(file_Kim2013)
 }
 
-# Extract the expression matrix and inspect phenotype data
-mat <- exprs(ES)
-print(dim(mat))
-print(pData(ES))
 
 # -------------------------------
-# Gene ID Conversion using biomaRt
+# Converting gene ids using biomaRt
 # -------------------------------
 if (!file.exists(file_humanht12v4)) {
   
@@ -81,8 +81,9 @@ if (!file.exists(file_humanht12v4)) {
   dt_ids <- readRDS(file_humanht12v4)
 }
 
+
 # -------------------------------
-# Processing Expression Data
+#  Preparing data for age-prediction
 # -------------------------------
 # Reload ExpressionSet (if needed) and conversion table
 ES <- readRDS(file_Kim2013)
@@ -98,10 +99,11 @@ mat2 <- filtering_age_model_genes_and_rank_norm(mat1) %T>% pdim  # Expected dime
 pdata <- pData(ES) %>% setDT
 pdata1 <- pdata[, 31] %>% set_colnames('population_doubling')
 
+
 # -------------------------------
-# Adding Metadata and Predicted Ages
+# Creating metadata and predict Ages
 # -------------------------------
-# Define a table with doubling time and beta-gal measurements
+# Define a table with metadata information
 dt_beta_gal <- data.table(
   doubling_time  = c(2, 2, 3, 5, 7, 10, 12, 14, 15, 20, 30, 40),
   nb_of_passages = c(16, 22, 54, 67, 75, 79, 81, 83, 85, 87, 88, 89),
@@ -114,20 +116,22 @@ dt_beta_gal <- data.table(
 print(all.equal(as.numeric(pdata1$population_doubling[1:11]),
                 dt_beta_gal$doubling_time[1:11]))  # should be TRUE
 
-# Use dt_beta_gal as phenotype data and add age predictions to it
+# Predicting age-effects and adding these to the metadata table
 pdata1 <- copy(dt_beta_gal)
 pdata1 %<>% adding_age_preds_to_pdata(t(mat2), CT46 = TRUE)
 print(dim(pdata1))
+
 
 # -------------------------------
 # Reshaping to Long Format for Correlation Analysis
 # -------------------------------
 # Here we use the column names from dt_beta_gal as identifier variables.
-v_ids <- names(dt_beta_gal)
-pdata1_long <- melt(pdata1, id.vars = v_ids, variable.name = 'model_type')
+pdata1_long <- melt(pdata1, id.vars = names(dt_beta_gal), 
+  variable.name = 'model_type')
 pdata1_long <- pdata1_long[model_type == 'PASTA']
-pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'),
-                      variable.name = 'outcome', value.name = 'outcome_value')
+pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'), 
+  variable.name = 'outcome', value.name = 'outcome_value')
+
 
 # -------------------------------
 # Computing Correlations
@@ -137,6 +141,7 @@ dt_cor <- pdata1_long1[, .(PCC = cor(value, outcome_value)), by = .(model_type, 
 dt_cor[, outcome := outcome %>% gsub('_', ' ', .) %>% gsub('beta', 'B', .) %>% gsub('nb of ', '', .)]
 dt_cor[, outcome := factor(outcome, levels = rev(as.character(dt_cor[model_type == 'PASTA']$outcome)))]
 print(dt_cor)
+
 
 # -------------------------------
 # Visualization
