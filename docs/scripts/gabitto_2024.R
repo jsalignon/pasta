@@ -1,15 +1,9 @@
+
 # Tutorial for analyzing Seurat datasets with Pasta
 # ========================================================
-# This script demonstrates an analysis using the Pasta package on the dataset
-# "L5 ET - MTG" from Gabitto, Nature Neuroscience, 2024.
-#
-# The study, "Integrated multimodal cell atlas of Alzheimer’s disease", is available at:
-# - CellxGene: https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30
-# - Nature Neuroscience: https://doi.org/10.1038/s41593-024-01774-5
-#
-# In this analysis, we load an example Seurat object, process its metadata,
-# filter cell types, create pseudobulk samples for age prediction, compute correlations,
-# and visualize the results.
+# This script demonstrates an analysis on the CellxGene collection 
+# 1ca90a2d-2943-483d-b678-b809bf464c30, "L5 ET - MTG" from Gabitto, Nature 
+# Neuroscience, 2024
 
 
 # -------------------------------
@@ -21,26 +15,29 @@ library(magrittr)
 library(data.table)
 library(ggplot2)
 library(Seurat)
-# You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `Seurat`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
+# You can install any missing packages using `install.packages()` for CRAN 
+# packages (`magrittr`, `data.table`, `ggplot2`, `Seurat`), or 
+# `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
-# Load example dataset of retina horizontal cells
-data(seu_gabitto_2024_L5_ET_MTG_neuron)
-seu <- seu_gabitto_2024_L5_ET_MTG_neuron %T>% pdim  # Dimensions: 36,412 genes x 2,590 cells
-rm(seu_gabitto_2024_L5_ET_MTG_neuron)
-
-
-# -------------------------------
-# 1. Downloading data
-# -------------------------------
-
-file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
-if(!file.exists(file_Gabitto2024)){
-  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
+# Create output directory if needed
+if (!dir.exists("../output")) {
+  dir.create("../output")
 }
 
 
 # -------------------------------
-# 2. Filtering data
+# 2. Downloading data
+# -------------------------------
+
+file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
+if(!file.exists(file_Gabitto2024)){
+  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', 
+    destfile = file_Gabitto2024)
+}
+
+
+# -------------------------------
+# 3. Filtering data
 # -------------------------------
 # Filtering data to keep only cells from healthy donors with known age and 
 # made with the 10X 3' method.
@@ -63,7 +60,7 @@ if(!file.exists(file_Gabitto2024_filtered)){
 
 
 # -------------------------------
-# 3. Processing the Metadata
+# 4. Processing the Metadata
 # -------------------------------
 # Adjust metadata: extract age and convert cell type to character.
 seu$age  <- seu$development_stage %>% gsub("-year.*", "", .) %>% 
@@ -87,7 +84,7 @@ seu %<>% filter_cell_types_in_seu_object %T>% pdim
 
 
 # -------------------------------
-# 4. Creating pseudobulks and prediting their age-effects
+# 5. Creating pseudobulks and prediting their age-effects
 # -------------------------------
 
 # Predict age using multiple pseudobulk chunk sizes.
@@ -96,7 +93,7 @@ dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 
 
 # -------------------------------
-# 5. Correlation Analysis
+# 6. Correlation Analysis
 # -------------------------------
 # Compute correlations by chunk size for different modeling strategies.
 dt_cor <- dt_age_pred[, .(
@@ -117,7 +114,7 @@ cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_le
 
 
 # -------------------------------
-# 6. Visualization
+# 7. Visualization
 # -------------------------------
 # Plot Pearson correlation coefficients (PCC) for different modeling strategies.
 p1 <- ggplot(cur_dt1, aes(x = log2(chunk_size), y = PCC, 

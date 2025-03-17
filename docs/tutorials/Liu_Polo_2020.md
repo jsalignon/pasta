@@ -30,17 +30,21 @@ obtain phenotype data, and predict age scores.
 
 ``` r
 library(pasta)
+library(jsutil)
 library(magrittr)
 library(data.table)
 library(ggplot2)
 library(gtools)
-library(jsutil)
 
 # Create output directory if needed
 if (!dir.exists("../output")) {
   dir.create("../output")
 }
 ```
+
+You can install any missing packages using `install.packages()` for CRAN
+packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), or
+`devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
 ## Getting GEO ExpressionSet and predict age scores
 

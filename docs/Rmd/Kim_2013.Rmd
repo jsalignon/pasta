@@ -1,6 +1,6 @@
 
 ---
-title: "Pasta Analysis Tutorial: Kim, Aging Cell, 2013"
+title: "Tutorial for analyzing GEO microarray datasets with Pasta"
 author: "Jérôme Salignon"
 date: "`r Sys.Date()`"
 output:

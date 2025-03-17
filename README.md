@@ -88,13 +88,13 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mea
 
 Here are 3 examples with tutorials and scripts illustrating how to use Pasta: 
 
- - Example 1. Predicting age-effects for a GEO Series: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R)  
+ - Example 1. analyzing GEO bulk RNA-Seq datasets with Pasta: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R)  
 In this example, we analyze a reprogramming bulk RNA-Seq timecourse dataset (Liu&Polo, 2020). 
 
- - Example 2. Predicting age-effects for a GEO Series: [tutorial](docs/tutorials/Kim_2013.md), [script](docs/scripts/Kim_2013.R).
+ - Example 2. analyzing GEO microarray datasets with Pasta: [tutorial](docs/tutorials/Kim_2013.md), [script](docs/scripts/Kim_2013.R).
 In this example, we analyze a senescence microarray timecourse dataset (Kim 2013). We use biomaRt to convert microarrays ids to ensembl gene ids.
 
- - Example 3. Predicting age-effects for a Seurat object: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
+ - Example 3. analyzing Seurat datasets with Pasta: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
 In this example, we analyze a single-cell transcriptomic dataset of cortical neurons (Gabitto 2024). We use different pseudobulk sizes to aggregate single-cell, predict age, and calculate Pearson correlation for each pseudobulk size.
 
 ## Citation

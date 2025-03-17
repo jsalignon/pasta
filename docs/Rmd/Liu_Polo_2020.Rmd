@@ -1,6 +1,6 @@
 
 ---
-title: "Pasta Example Analysis: Liu Polo 2020"
+title: "Tutorial for analyzing GEO bulk RNA-Seq datasets with Pasta"
 author: "Jérôme Salignon"
 date: "`r Sys.Date()`"
 output:

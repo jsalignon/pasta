@@ -1,14 +1,9 @@
-# run_analysis.R
-# This script runs the Pasta example analysis on dataset GSE149694
-# from Liu & Polo (2020, Nature).
-#
-# Before running, ensure that the following packages are installed:
-# - pasta
-# - magrittr
-# - data.table
-# - ggplot2
-# - gtools
-#
+
+# Script for analyzing GEO bulk RNA-Seq datasets with Pasta
+# =============================================================
+# This script demonstrates an analysis on dataset GSE149694 from Liu & Polo, 
+# Nature, 2020.
+
 
 # =============================================================================
 # Loading libraries
@@ -20,7 +15,9 @@ library(magrittr)
 library(data.table)
 library(ggplot2)
 library(gtools)
-# You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
+# You can install any missing packages using `install.packages()` for CRAN
+# packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), or
+# `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
 # Create output directory if needed
 if (!dir.exists("../output")) {

@@ -20,9 +20,9 @@ is available at
 [CellxGene](https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30)
 and [Nature Neuroscience](https://doi.org/10.1038/s41593-024-01774-5).
 In particular, the dataset “L5 ET - MTG: Seattle Alzheimer’s Disease
-Atlas (SEA-AD)” of 2,590 cells was downloaded from CellxGene. These
-cells corresponds to Layer 5 extratelencephalic cortical neurons in the
-middle temporal gyrus.
+Atlas (SEA-AD)” of 2,590 cells is downloaded from CellxGene. These cells
+corresponds to Layer 5 extratelencephalic cortical neurons in the middle
+temporal gyrus.
 
 # Data Acquisition, Age-Prediction, and Processing
 
@@ -55,7 +55,7 @@ packages (`magrittr`, `data.table`, `ggplot2`, `Seurat`), or
 ``` r
 file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
 if(!file.exists(file_Gabitto2024)){
-  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
+  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = file_Gabitto2024)
 }
 ```
 
@@ -146,7 +146,6 @@ cells, and then create pseudobulk samples for age prediction.
 ``` r
 # Predict age using a single chunk sizes
 # dt_age_pred <- making_pseudobulks_and_predict_age(seu, chunk_size = 1000)
-# => This function can be used to predict for a single pseudobulk size
 
 # Predict age using multiple pseudobulk chunk sizes
 v_chunk_sizes <- 2^(0:9)

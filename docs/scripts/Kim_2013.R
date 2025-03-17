@@ -1,20 +1,11 @@
-# Kim Aging Cell 2013 Analysis Tutorial using the Pasta package
+
+# Script for analyzing GEO microarray datasets with Pasta
 # =============================================================
 # This script demonstrates an analysis on dataset GSE41714 from Kim, Aging Cell, 2013.
-# It covers:
-#   - Data acquisition via GEOquery,
-#   - Gene ID conversion using biomaRt,
-#   - Processing expression data using Pasta functions,
-#   - Adding age predictions,
-#   - Reshaping data and computing correlations,
-#   - Visualization.
-#
-# Ensure that the following packages are installed:
-#   pasta, jsutil, magrittr, data.table, ggplot2, gtools, GEOquery, biomaRt
 
 
 # -------------------------------
-# Loading Libraries
+# 1. Loading Libraries
 # -------------------------------
 library(pasta)
 library(jsutil)
@@ -24,24 +15,21 @@ library(ggplot2)
 library(gtools)
 library(GEOquery)
 library(biomaRt)
-# You can install any missing packages using `install.packages()` for CRAN packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), `BiocManager::install()` for bioconductor packages (`GEOquery`, `biomaRt`), or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
-
-
-# -------------------------------
-# Defining Output Files
-# -------------------------------
-file_Kim2013 <- '../output/ES_Kim2013.rds'
-file_humanht12v4 <- '../output/dt_ids__humanht_12_v4.rds'
+# You can install any missing packages using `install.packages()` for CRAN 
+# packages (`magrittr`, `data.table`, `ggplot2`, `gtools`), 
+# `BiocManager::install()` for bioconductor packages (`GEOquery`, `biomaRt`), 
+# or `devtools::install_github()` for GitHub packages (`pasta`, `jsutil`).
 
 # Create output directory if needed
 if (!dir.exists("../output")) {
-  dir.create("../output", showWarnings = FALSE, recursive = TRUE)
+  dir.create("../output")
 }
 
 
 # -------------------------------
-# Getting GEO ExpressionSet
+# 2. Getting GEO ExpressionSet
 # -------------------------------
+file_Kim2013 <- '../output/ES_Kim2013.rds'
 if (!file.exists(file_Kim2013)) {
   # Load the ExpressionSet for GSE41714 using GEOquery
   ES <- getGEO('GSE41714', GSEMatrix = TRUE, getGPL = FALSE)[[1]]
@@ -53,8 +41,9 @@ if (!file.exists(file_Kim2013)) {
 
 
 # -------------------------------
-# Converting gene ids using biomaRt
+# 3. Converting gene ids using biomaRt
 # -------------------------------
+file_humanht12v4 <- '../output/dt_ids__humanht_12_v4.rds'
 if (!file.exists(file_humanht12v4)) {
   
   # Load the expression matrix from the ExpressionSet
@@ -84,7 +73,7 @@ if (!file.exists(file_humanht12v4)) {
 
 
 # -------------------------------
-#  Preparing data for age-prediction
+# 4. Preparing data for age-prediction
 # -------------------------------
 # Reload ExpressionSet (if needed) and conversion table
 ES <- readRDS(file_Kim2013)
@@ -102,7 +91,7 @@ pdata1 <- pdata[, 31] %>% set_colnames('population_doubling')
 
 
 # -------------------------------
-# Creating metadata and predict ages
+# 5. Creating metadata and predict ages
 # -------------------------------
 # Define a table with metadata information
 dt_beta_gal <- data.table(
@@ -124,7 +113,7 @@ print(pdata1)
 
 
 # -------------------------------
-# Reshaping to Long Format for Correlation Analysis
+# 6. Reshaping to Long Format for Correlation Analysis
 # -------------------------------
 pdata1_long <- melt(pdata1, id.vars = names(dt_beta_gal), 
   variable.name = 'model_type')
@@ -134,7 +123,7 @@ pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'),
 
 
 # -------------------------------
-# Computing Correlations
+# 7. Computing Correlations
 # -------------------------------
 dt_cor <- pdata1_long1[, .(PCC = cor(value, outcome_value)), by = .(model_type, outcome)][order(-PCC)]
 # Clean up outcome names
@@ -144,7 +133,7 @@ print(dt_cor)
 
 
 # -------------------------------
-# Visualization
+# 8. Visualization
 # -------------------------------
 p_cor_sen_day_2 <- ggplot(pdata1_long1[outcome == 'day'], aes(x = outcome_value, y = value)) + 
   xlab('Day') + 

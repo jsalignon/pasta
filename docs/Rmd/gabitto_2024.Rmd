@@ -1,6 +1,6 @@
 
 ---
-title: "Tutorial for analyzing Seurat datasets with Pasta"
+title: "Script for analyzing Seurat datasets with Pasta"
 author: "Jérôme Salignon"
 date: "`r Sys.Date()`"
 output:
@@ -12,7 +12,7 @@ output:
 # Introduction
 
 This tutorial demonstrates an analysis using the **Pasta** package on the dataset **L5 ET - MTG** from Gabitto, *Nature Neuroscience*, 2024.  
-The study, *"Integrated multimodal cell atlas of Alzheimer’s disease"*, is available at [CellxGene](https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30) and [Nature Neuroscience](https://doi.org/10.1038/s41593-024-01774-5). In particular, the dataset "L5 ET - MTG: Seattle Alzheimer's Disease Atlas (SEA-AD)" of 2,590 cells was downloaded from CellxGene. These cells corresponds to Layer 5 extratelencephalic cortical neurons in the middle temporal gyrus. 
+The study, *"Integrated multimodal cell atlas of Alzheimer’s disease"*, is available at [CellxGene](https://cellxgene.cziscience.com/collections/1ca90a2d-2943-483d-b678-b809bf464c30) and [Nature Neuroscience](https://doi.org/10.1038/s41593-024-01774-5). In particular, the dataset "L5 ET - MTG: Seattle Alzheimer's Disease Atlas (SEA-AD)" of 2,590 cells is downloaded from CellxGene. These cells corresponds to Layer 5 extratelencephalic cortical neurons in the middle temporal gyrus. 
 
 
 # Data Acquisition, Age-Prediction, and Processing
@@ -40,7 +40,7 @@ You can install any missing packages using `install.packages()` for CRAN package
 ```{r download-data, message=FALSE, warning=FALSE}
 file_Gabitto2024 = '../output/seu_gabitto_2024.rds'
 if(!file.exists(file_Gabitto2024)){
-  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = '../output/seu_gabitto_2024.rds')
+  download.file('https://datasets.cellxgene.cziscience.com/9d53f7bb-dc23-4c05-b2a6-4afa9a6e3be0.rds', destfile = file_Gabitto2024)
 }
 ```
 
