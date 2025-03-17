@@ -17,7 +17,7 @@ This document provides an example analysis using Pasta on dataset
 **GSE149694** from Liu & Polo, *Nature*, 2020. The study, titled
 *“Reprogramming roadmap reveals route to human induced trophoblast stem
 cells”*, is available online at
-[GEO]((https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694)),
+[GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694),
 [Nature](https://www.nature.com/articles/s41586-020-2734-6), and on the
 [HRPI website](http://hrpi.ddnetbio.com/).
 
