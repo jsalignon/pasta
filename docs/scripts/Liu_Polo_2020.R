@@ -10,6 +10,10 @@
 # - gtools
 #
 
+# =============================================================================
+# Loading libraries
+# =============================================================================
+
 # Load necessary libraries
 library(pasta)
 library(magrittr)
@@ -26,7 +30,7 @@ if (!dir.exists("../output")) {
 # Data Acquisition and Processing
 # =============================================================================
 
-# Get GEO ExpressionSet and Age Scores
+# Getting GEO ExpressionSet and predict age scores
 
 # Download ExpressionSet for GSE149694; expect dimensions: 8113 x 8
 file_LiuPolo2020 = '../output/ES_LiuPolo2020.rds'
@@ -42,7 +46,7 @@ pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 
 
 # =============================================================================
-# Reshape and Clean the Data
+# Reshaping to long format and cleaning the metadata
 # =============================================================================
 
 # Reshape data and extract condition, time, and replicate information from the title.
@@ -57,7 +61,7 @@ dt[, time1 := as.integer(time)]
 
 
 # =============================================================================
-# Advanced Processing for Liu & Polo 2020 Data
+# Adding initial time points
 # =============================================================================
 
 # Load and Prepare Data
@@ -85,7 +89,7 @@ print(unique(dt_liuPolo[, .(condition, time, time1)])[order(condition, time1)])
 
 
 # =============================================================================
-# Compute Correlations
+# Computing Correlations
 # =============================================================================
 
 # Calculate Pearson and Spearman correlations between age_score and time1, grouped by model_type and condition

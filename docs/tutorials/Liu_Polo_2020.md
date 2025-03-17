@@ -1,9 +1,9 @@
 - [Introduction](#introduction)
 - [Data acquisition, age-prediction, and
   processing](#data-acquisition-age-prediction-and-processing)
-  - [Loading all needed libraries](#loading-all-needed-libraries)
-  - [Getting GEO ExpressionSet and predicted age
-    scores](#getting-geo-expressionset-and-predicted-age-scores)
+  - [Loading libraries](#loading-libraries)
+  - [Getting GEO ExpressionSet and predict age
+    scores](#getting-geo-expressionset-and-predict-age-scores)
   - [Reshaping to long format and cleaning the
     metadata](#reshaping-to-long-format-and-cleaning-the-metadata)
   - [Adding initial time points](#adding-initial-time-points)
@@ -24,17 +24,15 @@ cells”*, is available online at
 # Data acquisition, age-prediction, and processing
 
 In this section, we download the GEO ExpressionSet, obtain phenotype
-data with age scores, and perform some data wrangling. The following
-code executes the complete workflow using the Pasta functions.
+data, and predict age scores.
 
-## Loading all needed libraries
+## Loading libraries
 
-## Getting GEO ExpressionSet and predicted age scores
+## Getting GEO ExpressionSet and predict age scores
 
 ``` r
-file_LiuPolo2020 = 'output/ES_LiuPolo2020.rds'
+file_LiuPolo2020 = '../output/ES_LiuPolo2020.rds'
 if(!file.exists(file_LiuPolo2020)){
-  dir.create('output', showWarnings = F)
   # Download ExpressionSet for GSE149694
   ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
   saveRDS(ES, file_LiuPolo2020)
@@ -49,8 +47,8 @@ pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
 
 ## Reshaping to long format and cleaning the metadata
 
-Here we reshape the data and extract information such as condition,
-time, and replicate details from the title.
+Here we reshape the data to long format and extract information such as
+condition, time, and replicate details from the title.
 
 ``` r
 dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
@@ -65,10 +63,9 @@ dt[, time1 := as.integer(time)]
 
 ## Adding initial time points
 
-The initial time points (Fibroblast, day 3 and 7) is the same between
-all conditions (‘NHSM’, ‘5iLAF’, ‘Primed’, ‘t2iLGoY’, ‘RSeT’). missing
-for all samples. We add this time point to each condition so we can then
-compute correlation.
+The initial time points (Fibroblast, day 3 and 7) are the same between
+all conditions (‘NHSM’, ‘5iLAF’, ‘Primed’, ‘t2iLGoY’, ‘RSeT’). We add
+these time point to each condition so we can then compute correlation.
 
 ``` r
 dt_pasta <- dt[model_type == 'PASTA']
@@ -120,8 +117,8 @@ unique(dt_liuPolo[, c('condition', 'time', 'time1')])[order(condition, time1)]
 
 ## Computing correlations
 
-We calculate both Pearson and Spearman correlations between predicted
-age scores and the true time values.
+We calculate both the Pearson and Spearman correlations coefficients
+between predicted age scores and the true time values.
 
 ``` r
 dt_cor <- dt_liuPolo[, .(
@@ -157,8 +154,7 @@ cat("Spearman correlation between time1 and age_score:",
 
 ## Visualization
 
-Finally, we visualize the correlation data and the timecourse of the age
-predictions.
+Finally, we visualize the timecourse of the age-effect predictions.
 
 ``` r
 # Plot predicted age scores over time for the Liu & Polo dataset
