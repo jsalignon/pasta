@@ -6,7 +6,7 @@
 
 
 # =============================================================================
-# Loading libraries
+# 1. Loading libraries
 # =============================================================================
 
 # Load necessary libraries
@@ -25,7 +25,7 @@ if (!dir.exists("../output")) {
 }
 
 # =============================================================================
-# Data Acquisition and Processing
+# 2. Getting GEO ExpressionSet and predict age scores
 # =============================================================================
 
 # Getting GEO ExpressionSet and predict age scores
@@ -41,7 +41,7 @@ pdata <- getting_pdata_with_age_scores(ES)
 
 
 # =============================================================================
-# Reshaping to long format and cleaning the metadata
+# 3. Reshaping to long format and cleaning the metadata
 # =============================================================================
 
 # Reshape data and extract condition, time, and replicate information from the title.
@@ -57,7 +57,7 @@ dt[, time1 := as.integer(time)]
 
 
 # =============================================================================
-# Adding initial time points
+# 4. Adding initial time points
 # =============================================================================
 
 # Load and Prepare Data
@@ -85,7 +85,7 @@ print(unique(dt_liuPolo[, .(condition, time, time1)])[order(condition, time1)])
 
 
 # =============================================================================
-# Computing Correlations
+# 5. Computing Correlations
 # =============================================================================
 
 # Calculate Pearson and Spearman correlations between age_score and time1, grouped by model_type and condition
@@ -105,7 +105,7 @@ cat("Spearman correlation between time1 and age_score:",
 
 
 # =============================================================================
-# Visualization
+# 6. Visualization
 # =============================================================================
 
 # Plot predicted age scores over time for the Liu & Polo dataset
