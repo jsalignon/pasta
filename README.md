@@ -5,7 +5,7 @@
 
 <img src="/docs/images/pasta_logo.png" width="400" />
 
-Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation)
+Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [License](#license)
 
 
 ## Installation
@@ -17,7 +17,7 @@ devtools::install_git("git@github.com:jsalignon/pasta.git", upgrade = "never")
 ```
 
 It is recommended to also install the following packages:
- - CRAN: magrittr, data.table, ggplot2, gtools
+ - CRAN: magrittr, data.table, ggplot2, gtools, Seurat
  - Bioconductor: Biobase
  - GitHub: jsalignon/jsutil
 
@@ -94,8 +94,12 @@ In this example, we analyze a senescence microarray timecourse dataset (Kim 2013
  - Example 3. analyzing Seurat datasets with Pasta: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
 In this example, we analyze a single-cell transcriptomic dataset of cortical neurons (Gabitto 2024). We use different pseudobulk sizes to aggregate single-cell, predict age, and calculate Pearson correlation for each pseudobulk size.
 
+
 ## Citation
 If you use Pasta in your research, please cite our manuscript:
 
 [Manuscript Title], bioRxiv, [DOI link].
 
+
+## Licence
+**Licence**: This source code is released under the MIT license, included [here](LICENCE.md).
