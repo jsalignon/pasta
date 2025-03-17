@@ -1,7 +1,7 @@
 
 ## Welcome to Pasta!
 
-**Pasta** (P̲redicting A̲ge-S̲hift from T̲ranscriptomic A̲nalyses) is an R package designed to predict cellular age-effects using various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, L1000. The tool streamlines the process of preparing transcriptomic datasets, and making age-predictions using different models. For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
+**Pasta** (P̲redicting A̲ge-S̲hift from T̲ranscriptomic A̲nalyses) is an R package designed to predict cellular age-effects using various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
 
 <img src="/docs/images/pasta_logo.png" width="400" />
 
@@ -21,7 +21,7 @@ devtools::install_git("git@github.com:jsalignon/pasta.git", upgrade = "never")
 
 It is recommended to also install the following packages:
  - CRAN: magrittr, data.table, ggplot2, gtools
- - Biobase: ExpressionSet
+ - Bioconductor: Biobase
  - GitHub: jsalignon/jsutil
 
 
@@ -45,9 +45,9 @@ pdata = getting_pdata_with_age_scores(ES_GSE103938, filter_genes = T, rank_norm 
 
 Here is how to predict age with a count matrix: 
 ``` r
-mat = exprs(ES_GSE103938)
+mat = exprs(ES_GSE103938) %T>% pdim # 57,232 genes, 21 samples
 pdata = pData(ES_GSE103938) %>% copy %>% setDT
-mat %<>% filtering_age_model_genes_and_rank_norm
+mat %<>% filtering_age_model_genes_and_rank_norm %T>% pnrow # 8113 genes
 mat %<>% applying_rank_normalization
 pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, PASTA = TRUE, CT46 = TRUE)
 pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
@@ -72,7 +72,7 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = m
     ## 3:  1nM Rapamycin              -6.103977              38.12827                 NaN
 In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence). Please note that PASTA predicts only relative age, so the predicted age-effects should mainly be compared between different samples of a given study.
 
-Here are the results with the regression model:
+Here are the results when using the regression model:
 ``` r
 print(dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mean))
 ```
