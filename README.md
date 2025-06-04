@@ -1,16 +1,16 @@
 
-## Welcome to Pasta!
+## Welcome to Pasta!  
 
-**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [manuscript on bioRxiv](https://www.biorxiv.org/).
+**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://doi.org/10.1101/2025.06.04.657785).
 
 <p align="center">
-<img src="/docs/images/pasta_logo.png" width="400" />
+<img src="/docs/images/Figure_S7.jpg" width="400" />
 </p>
 
 Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [Licence](#licence)
 
 
-## Installation
+## Installation  
 
 Pasta is available on GitHub. You can install it directly using `devtools`:
 
@@ -18,13 +18,19 @@ Pasta is available on GitHub. You can install it directly using `devtools`:
 devtools::install_git("git@github.com:jsalignon/pasta.git", upgrade = "never")
 ```
 
+or remotes:
+```r
+remotes::install_github("jsalignon/pasta", dependencies = TRUE, upgrade = "never")
+```
+
+
 It is recommended to also install the following packages:
  - CRAN: magrittr, data.table, ggplot2, gtools, Seurat
  - Bioconductor: Biobase
  - GitHub: jsalignon/jsutil
 
 
-## Quick start
+## Quick start  
 
 GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
 ``` r
@@ -33,7 +39,7 @@ library(Biobase)
 ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
 pdata = getting_pdata_with_age_scores(ES, filter_genes = F, rank_norm = F)
 ```
-The function `getting_GEO_ES_for_age_model` download and preprocess the data (filter genes and do rank normalization).
+The function `getting_GEO_ES_for_age_model` downloads and preprocesses the data (filter genes and do rank normalization).
 The function `getting_pdata_with_age_scores` predict ages.
 
 With an ExpressionSet object, one can preprocess the data and predict age-effects in a single line:
@@ -58,7 +64,7 @@ pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
     ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161 -4.438762 3.149072
     ## 3: OSKM1nM_1 1nM Rapamycin OSKM expressing vector 36.73217 -8.277933 4.138329
 
-Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cuttoffs at <40 and >60 years, and PASTA, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
+Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cutoffs at <40 and >60 years, and PASTA, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
 
 ``` r
 print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean))
@@ -83,7 +89,7 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mea
     ##3:  1nM Rapamycin               37.72791              58.28124                 NaN
 
 
-## Examples
+## Examples  
 
 Here are 3 examples with tutorials and scripts illustrating how to use Pasta: 
 
@@ -97,11 +103,12 @@ In this example, we analyze a senescence microarray timecourse dataset (Kim 2013
 In this example, we analyze a single-cell transcriptomic dataset of cortical neurons (Gabitto 2024). We use different pseudobulk sizes to aggregate single-cell, predict age, and calculate Pearson correlation for each pseudobulk size.
 
 
-## Citation
+## Citation  
+
 If you use Pasta in your research, please cite our manuscript:
 
-[Manuscript Title], bioRxiv, [DOI link].
+Pasta, an age-shift transcriptomic clock, maps the chemical and genetic determinants of aging and rejuvenation, [Salignon et al, 2025, bioRxiv](https://doi.org/10.1101/2025.06.04.657785).
 
 
-## Licence
-**Licence**: This source code is released under the MIT licence, included [here](LICENCE.md).
+## License
+**Licence**: This source code is released under the MIT licence, included [here](LICENSE).
