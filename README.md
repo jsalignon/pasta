@@ -12,14 +12,9 @@ Sections: [Installation](#installation), [Quick start](#quick-start), [Examples]
 
 ## Installation  
 
-Pasta is available on GitHub. You can install it directly using `devtools`:
-
+Pasta is available on GitHub. You can install it directly using `remotes`:
 ```r
-devtools::install_git("git@github.com:jsalignon/pasta.git", upgrade = "never")
-```
-
-or remotes:
-```r
+install.packages("remotes")
 remotes::install_github("jsalignon/pasta", dependencies = TRUE, upgrade = "never")
 ```
 
@@ -32,10 +27,16 @@ It is recommended to also install the following packages:
 
 ## Quick start  
 
+> **⚠️ Warning**  
+> GEO is currently down. Functions that fetch data from GEO will fail until the service is back online.
+
 GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
 ``` r
 library(pasta)
+library(data.table)
 library(Biobase)
+library(magrittr)
+library(jsutil)
 ES <- getting_GEO_ES_for_age_model('GSE149694') %T>% pdim  # Dimensions: 8113 x 8
 pdata = getting_pdata_with_age_scores(ES, filter_genes = F, rank_norm = F)
 ```
