@@ -27,9 +27,6 @@ It is recommended to also install the following packages:
 
 ## Quick start  
 
-> **⚠️ Warning**  
-> GEO is currently down. Functions that fetch data from GEO will fail until the service is back online.
-
 GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
 ``` r
 library(pasta)
@@ -54,7 +51,6 @@ Here is how to predict age with a count matrix:
 mat = exprs(ES_GSE103938) %T>% pdim # 57,232 genes, 21 samples
 pdata = pData(ES_GSE103938) %>% copy %>% setDT
 mat %<>% filtering_age_model_genes_and_rank_norm %T>% pnrow # 8113 genes
-mat %<>% applying_rank_normalization
 pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, PASTA = TRUE, CT46 = TRUE)
 pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
 ```
@@ -65,7 +61,7 @@ pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
     ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161 -4.438762 3.149072
     ## 3: OSKM1nM_1 1nM Rapamycin OSKM expressing vector 36.73217 -8.277933 4.138329
 
-Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cutoffs at <40 and >60 years, and PASTA, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
+Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cutoffs at <40 and >60 years, and Pasta, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
 
 ``` r
 print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean))
@@ -76,7 +72,7 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = m
     ## 1:           <NA>              -3.816706              36.43337            4.762343
     ## 2: 10nM Rapamycin             -15.788035              33.73355                 NaN
     ## 3:  1nM Rapamycin              -6.103977              38.12827                 NaN
-In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence). Please note that PASTA predicts only relative age, so the predicted age-effects should mainly be compared between different samples of a given study.
+In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence). Please note that Pasta predicts only relative age, so the predicted age-effects should mainly be compared between different samples of a given study.
 
 Here are the results when using the regression model:
 ``` r
