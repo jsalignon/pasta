@@ -14,6 +14,8 @@ renaming_rows_in_mat_after_gene_id_conversion(
 \item{mat}{Matrix. Count matrix.}
 
 \item{dt_ids}{data.table. Conversion table with original and Ensembl gene IDs.}
+
+\item{species}{character. Either mouse or human.}
 }
 \value{
 Matrix. Count matrix with new row names.

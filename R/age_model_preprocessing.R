@@ -83,7 +83,7 @@ keeping_mouse_one2one_orthologs <- function(mat) {
   data(v_human_mouse_one2one, envir = environment())
 
   mat <- mat[rownames(mat) %in% names(v_human_mouse_one2one), ]
-  rownames(mat) <- v_hs_one2one[rownames(mat)]
+  rownames(mat) <- v_human_mouse_one2one[rownames(mat)]
 
   return(mat)
 }
