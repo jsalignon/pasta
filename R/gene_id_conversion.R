@@ -80,7 +80,9 @@ converting_gene_ids_to_ensembl_gene_ids <- function(mat, cur_mart,
 #' @param dt_ids data.table. Conversion table with original and Ensembl gene IDs.
 #' @return Matrix. Count matrix with new row names.
 #' @export
-renaming_rows_in_mat_after_gene_id_conversion <- function(mat, dt_ids) {
+renaming_rows_in_mat_after_gene_id_conversion <- function(mat, dt_ids, 
+  species = c('human','mouse')) {
+  species <- match.arg(species)
   v_names <- dt_ids$ensembl_gene_id %>% setNames(., dt_ids[[1]])
   v_names[duplicated(v_names)] <- NA
   v_new_names <- v_names[rownames(mat)]
@@ -88,6 +90,13 @@ renaming_rows_in_mat_after_gene_id_conversion <- function(mat, dt_ids) {
   names(v_new_names) <- NULL
   mat1 <- mat
   rownames(mat1) <- v_new_names
-  mat1 <- mat1[grep('ENSG', v_new_names, value = TRUE), ]
+  # mat1 <- mat1[grep('ENSG', v_new_names, value = TRUE), ]
+
+  if(species == 'human'){
+    mat1 <- mat1[grep('ENSG', v_new_names, value = TRUE), ]
+  } else if (species == 'mouse'){
+    mat1 <- mat1[grep('ENSMUSG', v_new_names, value = TRUE), ]
+  }
+  
   return(mat1)
 }

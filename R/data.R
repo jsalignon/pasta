@@ -69,6 +69,12 @@
 'v_genes_model'
 
 
+#' One-to-one ortholog mapping between human and mouse genes
+#'
+#' A vector of one-to-one ortholog relationships between human and mouse genes.
+#'
+#' @format A data frame or vector containing Ensemble gene identifiers for orthologous pairs
+"v_human_mouse_one2one"
 
 
 # ## creating the test dataset: GSE103938

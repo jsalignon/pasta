@@ -65,3 +65,28 @@ getting_geo_count_mat_for_age_prediction <- function(gse_id) {
   mat <- processing_geo_count_mat_for_age_prediction(mat)
   return(mat)
 }
+
+#' Convert Mouse Gene Matrix to Human Orthologs
+#'
+#' Filters a gene expression matrix to retain only mouse genes that have one-to-one 
+#' human orthologs, then converts the mouse gene identifiers to their corresponding 
+#' human ortholog identifiers. 
+#'
+#' @param mat Matrix. Gene expression matrix with mouse Ensemble gene identifiers as row
+#'   names and samples as columns.
+#'
+#' @return Matrix. Filtered gene expression matrix with human ortholog identifiers 
+#'   as row names, containing only genes with confirmed one-to-one orthology.
+#'   
+#' @export
+keeping_mouse_one2one_orthologs <- function(mat) {
+  data(v_human_mouse_one2one, envir = environment())
+
+  mat <- mat[rownames(mat) %in% names(v_human_mouse_one2one), ]
+  rownames(mat) <- v_hs_one2one[rownames(mat)]
+
+  return(mat)
+}
+
+
+
