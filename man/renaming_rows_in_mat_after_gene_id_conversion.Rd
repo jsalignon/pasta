@@ -4,7 +4,11 @@
 \alias{renaming_rows_in_mat_after_gene_id_conversion}
 \title{Rename Matrix Rows after Gene ID Conversion}
 \usage{
-renaming_rows_in_mat_after_gene_id_conversion(mat, dt_ids)
+renaming_rows_in_mat_after_gene_id_conversion(
+  mat,
+  dt_ids,
+  species = c("human", "mouse")
+)
 }
 \arguments{
 \item{mat}{Matrix. Count matrix.}
