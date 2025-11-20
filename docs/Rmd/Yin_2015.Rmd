@@ -12,23 +12,16 @@ output:
 
 # Introduction
 
-This tutorial demonstrates an analysis using the **Pasta** package on the mouse dataset **GSE40156** from Hu, *Immunity*, 2015.  
-The study, *"Implications of time-series gene expression profiles of replicative senescence"*, is available at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41714) and [Aging Cell](https://onlinelibrary.wiley.com/doi/10.1111/acel.12087).
+This tutorial demonstrates an analysis using the **Pasta** package on the mouse dataset **GSE40156** from Yin, *Methods Mol Biol*, 2015.  
+The study, *"Generation of Aorta Transcript Atlases of Wild-Type and Apolipoprotein E-null Mice by Laser Capture Microdissection-Based mRNA Expression Microarrays"*, is available at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE40156) and [Methods in Mouse Atherosclerosis](https://doi.org/10.1007/978-1-4939-2929-0_20).
 
 
-We will
+# Data acquisition, processing, and age-prediction 
 
-1. Download the series matrix for GSE40156
-2. Convert Affymetrix Mouse430 2 probe identifiers to Ensembl gene identifiers
-3. Restrict the matrix to one to one mouse orthologs used in the Pasta age model
-4. Predict age with Pasta and compute correlations between true age and predicted age
-5. Summarize performance per tissue and per strain and visualize the results
-
-# Data acquisition and preprocessing
+In this section, we load libraries, download the GEO ExpressionSet, process the count matrix and metadata, and predict age scores.
 
 ## Loading libraries
 
-```r
 ```{r setup, message=FALSE, warning=FALSE}
 library(pasta)
 library(jsutil)
@@ -39,9 +32,6 @@ library(ggplot2)
 library(GEOquery)
 library(AnnotationDbi)
 
-# The following Bioconductor packages are required for mouse430 2 annotation
-# BiocManager::install("org.Mm.eg.db")
-# BiocManager::install("mouse4302.db")
 library(org.Mm.eg.db)
 library(mouse4302.db)
 
@@ -49,40 +39,41 @@ library(mouse4302.db)
 if (!dir.exists("../output")) {
   dir.create("../output")
 }
-
-# Directory for validation objects
-out_dir_2_PASTA_valid <- "../output/"
 ```
 
-You can install missing CRAN packages with `install.packages()`
-and Bioconductor packages with `BiocManager::install()` as commented above.
+You can install any missing packages using install.packages() for CRAN packages (magrittr, data.table, ggplot2, gtools), or devtools::install_github() for GitHub packages (pasta, jsutil) or BiocManager::install for Bioconductor packages (org.Mm.eg.db, mouse4302.db).
+
 
 ## Downloading GSE40156 from GEO
 
-```r
 ```{r download-gse40156, message=FALSE, warning=FALSE}
-cur_gse <- "GSE40156"
 
-# Download series matrix without platform annotation tables
-lES <- getGEO(cur_gse, GSEMatrix = TRUE, getGPL = FALSE)
+file_Yin2015_mouse = '../output/ES_Yin2015_mouse.rds'
+if(!file.exists(file_Yin2015_mouse)){
 
-# GSE40156 is on the Affymetrix Mouse Genome 430 2.0 Array (GPL1261)
-names(lES)
-ES <- lES[["GSE40156-GPL1261_series_matrix.txt.gz"]]
+  # Downloading a list of ExpressionSets from GEO
+  lES <- getGEO('GSE40156', GSEMatrix = TRUE, getGPL = FALSE)
 
-# Expression matrix, probes x samples
-mat <- exprs(ES) %T>% pdim  # about 45,101 probes, 42 samples
+  # Keeping the Affymetrix Mouse Genome 430 2.0 Array (GPL1261) data
+  ES <- lES[["GSE40156-GPL1261_series_matrix.txt.gz"]]
+
+  saveRDS(ES, file_Yin2015_mouse)
+} else {
+  ES <- readRDS(file_Yin2015_mouse)
+}
+
+mat <- exprs(ES) %T>% pdim  # 45,101 probes, 42 samples
+
 ```
 
-## Converting probe identifiers to Ensembl gene identifiers
 
-We convert probe identifiers from the Mouse430 2 array to Ensembl gene identifiers.
-To make future runs faster we save the conversion table as an RDS file and reuse it when available.
+## Converting gene ids using AnnotationDbi
 
-```r
+In this section, we use **AnnotationDbi** and the **mouse4302.db** package to convert probe identifiers from the Mouse430 2 array to Ensembl gene identifiers.
+
 ```{r convert-probe-to-ensembl, message=FALSE, warning=FALSE}
-file_dt_ids_affy_mouse430 <- "../output/dt_ids__affy_mouse430_2.rds"
 
+file_dt_ids_affy_mouse430 <- "../output/dt_ids__affy_mouse430_2.rds"
 if (!file.exists(file_dt_ids_affy_mouse430)) {
 
   dt_ids <- AnnotationDbi::select(
@@ -90,8 +81,7 @@ if (!file.exists(file_dt_ids_affy_mouse430)) {
     keys    = rownames(mat),
     keytype = "PROBEID",
     columns = c("ENSEMBL")
-  ) %>%
-    setDT %T>% pnrow
+  ) %>% setDT %T>% pnrow
 
   colnames(dt_ids) <- c("affy_mouse430_2", "ensembl_gene_id")
 
@@ -110,61 +100,48 @@ mat <- renaming_rows_in_mat_after_gene_id_conversion(mat, dt_ids,
     species = "mouse") %T>% pdim   # 18,353 genes, 42 samples
 ```
 
-## Restricting to Pasta age model genes
 
-We next restrict the matrix to one to one mouse orthologs that are part of the Pasta age model,
-and apply the rank based normalization used by the model.
+## Preparing data for age-prediction
 
-```r
-```{r restrict-age-model-genes, message=FALSE, warning=FALSE}
-# Keep only one to one orthologs between mouse and human used by the model
+Here we filter the matrix for one-to-one orthologs between mouse and human and keep the human name, then we preprocess the matrix for age-prediction by imputing missing genes with median and doing rank normalization. 
+
+```{r preprocess-matrix-for-age-prediction, message=FALSE, warning=FALSE}
+
 mat %<>% keeping_mouse_one2one_orthologs %T>% pdim # 3,010 genes, 42 samples
 
-# Filter to age model genes and rank normalize expression
 mat %<>% filtering_age_model_genes_and_rank_norm %T>% pdim # 8,113 genes, 42 samples
+
 ```
 
-## Extracting and cleaning phenotype data
+## Creating metadata and predict ages
 
-We extract age, tissue, and strain information from the GEO phenotype data and clean the age field.
-
-```r
 ```{r extract-pdata, message=FALSE, warning=FALSE}
-# Phenotype data from GEOquery ExpressionSet
-pdata <- pData(ES)[, c("geo_accession", "age:ch1", "tissue:ch1", "strain:ch1")] %>%
-  setDT
 
+# Phenotype data from GEOquery ExpressionSet
+pdata <- pData(ES) %>% setDT %>% copy
+pdata %<>% .[, c("geo_accession", "age:ch1", "tissue:ch1", "strain:ch1")] 
 colnames(pdata) <- c("geo_accession", "age", "tissue", "strain")
 
-# Check that samples are aligned between expression matrix and phenotype table
+# Sanity check
 all.equal(colnames(mat), pdata$geo_accession) # TRUE
-```
 
-# Age prediction with Pasta
-
-## Adding Pasta age predictions
-
-We now run Pasta on the transposed matrix and add predicted age scores to the phenotype data.
-For this validation we only compute Pasta scores without the CT46 component.
-
-```r
-```{r age-prediction, message=FALSE, warning=FALSE}
 # Adding Pasta age predictions
 pdata %<>% adding_age_preds_to_pdata(t(mat)) %T>% pdim 
 
 # Keeping only samples with non missing age
 pdata <- pdata[!is.na(age)] %T>% pdim
 
-# Converting age from character such as "6 weeks" to integer number of weeks
+# Age is counted in weeks; we convert it to integer
 pdata[, age := gsub(" weeks", "", age) %>% as.integer]
+
 ```
 
 
 # Results
 
-In this section, we compute correlations between the true age and the age scores from Pasta and visualize the results.
+Here we compute and visualize the Pearson correlation coefficients between chronological age and PASTA age scores, stratified by tissue and strain.
 
-## Correlation analysis
+## Computing correlations
 
 ```{r correlations-by-group, message=FALSE, warning=FALSE}
 dt_cor = pdata[, .(PCC = cor(age, PASTA)), c('tissue', 'strain')][order(-PCC)]
@@ -172,13 +149,12 @@ dt_cor[, strain := gsub('.*Apoe.*', 'Apoe', strain)]
 dt_cor[, strain := gsub('.*C57B.*', 'WT', strain)]
 dt_cor[, condition := paste0(tissue, ', ', strain)]
 dt_cor[, condition := factor(condition, levels = dt_cor$condition %>% rev)]
-dt_cor
+print(dt_cor)
 ```
 
 
 ## Visualization
 
-```r
 ```{r plot-pcc, message=FALSE, warning=FALSE}
 p1 <- ggplot(dt_cor, aes(x = PCC, y = condition)) +
   geom_point(size = 5) +

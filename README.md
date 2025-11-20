@@ -4,7 +4,7 @@
 **Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v1).
 
 <p align="center">
-<img src="/docs/images/Figure_S7.jpg" width="800" />
+<img src="/docs/images/Figure_S9.png" width="800" />
 </p>
 
 Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [Licence](#licence)
