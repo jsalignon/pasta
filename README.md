@@ -1,7 +1,7 @@
 
 ## Welcome to Pasta!  
 
-**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v1).
+**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of human and mouse transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v1).
 
 <p align="center">
 <img src="/docs/images/Figure_S9.png" width="800" />
@@ -27,7 +27,7 @@ It is recommended to also install the following packages:
 
 ## Quick start  
 
-GEO datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
+GEO human datasets with the label "Analyze with GEO2R" can be downloaded and preprocessed for age prediction in a single command. Here is an example for [GSE149694](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149694) (an RNA-Seq reprogramming timecourse):
 ``` r
 library(pasta)
 library(data.table)
@@ -88,16 +88,18 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'REG', fun.aggregate = mea
 
 ## Examples  
 
-Here are 3 examples with tutorials and scripts illustrating how to use Pasta: 
+Here are four examples with tutorials and scripts illustrating how to use Pasta: 
 
- - Example 1. analyzing GEO bulk RNA-Seq datasets with Pasta: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R)  
+ - Example 1. Analyzing GEO human bulk RNA-Seq datasets with Pasta: [tutorial](docs/tutorials/Liu_Polo_2020.md), [script](docs/scripts/Liu_Polo_2020.R)  
 In this example, we analyze a reprogramming bulk RNA-Seq timecourse dataset (Liu&Polo, 2020). 
 
- - Example 2. analyzing GEO microarray datasets with Pasta: [tutorial](docs/tutorials/Kim_2013.md), [script](docs/scripts/Kim_2013.R).
+ - Example 2. Analyzing GEO human microarray datasets with Pasta: [tutorial](docs/tutorials/Kim_2013.md), [script](docs/scripts/Kim_2013.R).
 In this example, we analyze a senescence microarray timecourse dataset (Kim 2013). We use biomaRt to convert microarrays ids to ensembl gene ids.
 
- - Example 3. analyzing Seurat datasets with Pasta: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
+ - Example 3. Analyzing human Seurat datasets with Pasta: [tutorial](docs/tutorials/gabitto_2024.md), [script](docs/scripts/gabitto_2024.R).
 In this example, we analyze a single-cell transcriptomic dataset of cortical neurons (Gabitto 2024). We use different pseudobulk sizes to aggregate single-cell, predict age, and calculate Pearson correlation for each pseudobulk size.
+
+ - Example 4. Analyzing GEO mouse microarray datasets with Pasta: [tutorial](docs/tutorials/Yin_2015.md), [script](docs/scripts/Yin_2015.R).
 
 
 ## Citation  
