@@ -4,12 +4,12 @@
 \alias{predicting_age_score}
 \title{Predict Age Score from Gene Expression Matrix}
 \usage{
-predicting_age_score(mat, model_type = "PASTA")
+predicting_age_score(mat, model_type = "Pasta")
 }
 \arguments{
 \item{mat}{Matrix. Processed count matrix.}
 
-\item{model_type}{Character. Model type ('PASTA', 'REG', or 'CT46').}
+\item{model_type}{Character. Model type ('Pasta', 'REG', or 'CT46').}
 }
 \value{
 Numeric vector. Predicted age scores.

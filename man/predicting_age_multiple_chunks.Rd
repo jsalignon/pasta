@@ -8,7 +8,7 @@ predicting_age_multiple_chunks(
   seu,
   v_chunk_sizes = c(500, 1000),
   REG = TRUE,
-  PASTA = TRUE,
+  Pasta = TRUE,
   CT46 = TRUE,
   verbose = TRUE
 )
@@ -20,14 +20,14 @@ predicting_age_multiple_chunks(
 
 \item{REG}{Logical. If \code{TRUE}, include predictions from the REG model. Default is \code{TRUE}.}
 
-\item{PASTA}{Logical. If \code{TRUE}, include predictions from the PASTA model. Default is \code{TRUE}.}
+\item{Pasta}{Logical. If \code{TRUE}, include predictions from the Pasta model. Default is \code{TRUE}.}
 
 \item{CT46}{Logical. If \code{TRUE}, include predictions from the CT46 model. Default is \code{TRUE}.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints progress and summary messages during processing. Default is \code{TRUE}.}
 }
 \value{
-A \code{data.table} containing the combined prediction results from each chunk size. The output includes columns for chunk size, cell type, true age, and predicted age scores for the models used (REG, PASTA, CT46).
+A \code{data.table} containing the combined prediction results from each chunk size. The output includes columns for chunk size, cell type, true age, and predicted age scores for the models used (REG, Pasta, CT46).
 }
 \description{
 This function predicts cellular age scores from a Seurat object by aggregating single-cell data into pseudobulk samples using different chunk sizes. For each specified chunk size, it applies the age prediction workflow and combines the results into a single data.table.

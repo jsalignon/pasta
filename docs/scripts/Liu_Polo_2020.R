@@ -45,7 +45,7 @@ pdata <- getting_pdata_with_age_scores(ES)
 # =============================================================================
 
 # Reshape data and extract condition, time, and replicate information from the title.
-pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
+pdata1 <- pdata[, c('title', 'Pasta', 'REG', 'CT46')]
 dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
 dt[, title := gsub('RNA-seq_', '', title)]
 dt[, condition := gsub('-.*', '', title)]
@@ -61,7 +61,7 @@ dt[, time1 := as.integer(time)]
 # =============================================================================
 
 # Load and Prepare Data
-dt_pasta <- dt[model_type == 'PASTA']
+dt_pasta <- dt[model_type == 'Pasta']
 
 # Separate fibroblast and non-fibroblast data
 dt_fibro <- dt_pasta[condition == 'Fibroblast']

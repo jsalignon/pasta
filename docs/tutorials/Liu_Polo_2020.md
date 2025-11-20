@@ -72,7 +72,7 @@ Here we reshape the data to long format and extract information such as
 condition, time, and replicate details from the title.
 
 ``` r
-pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
+pdata1 <- pdata[, c('title', 'Pasta', 'REG', 'CT46')]
 dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
 dt[, title := gsub('RNA-seq_', '', title)]
 dt[, condition := gsub('-.*', '', title)]
@@ -90,7 +90,7 @@ all conditions (‘NHSM’, ‘5iLAF’, ‘Primed’, ‘t2iLGoY’, ‘RSeT’
 these time point to each condition so we can then compute correlation.
 
 ``` r
-dt_pasta <- dt[model_type == 'PASTA']
+dt_pasta <- dt[model_type == 'Pasta']
 
 # Separate fibroblast and non-fibroblast data
 dt_fibro <- dt_pasta[condition == 'Fibroblast']
@@ -152,11 +152,11 @@ print(dt_cor)
 
     ##    model_type condition        PCC        SCC
     ##        <fctr>    <char>      <num>      <num>
-    ## 1:      PASTA      NHSM -0.9259211 -0.9759001
-    ## 2:      PASTA     5iLAF -0.9017599 -0.9759001
-    ## 3:      PASTA    Primed -0.9441355 -0.9320620
-    ## 4:      PASTA   t2iLGoY -0.8548639 -0.8845194
-    ## 5:      PASTA      RSeT -0.8461645 -0.8783101
+    ## 1:      Pasta      NHSM -0.9259211 -0.9759001
+    ## 2:      Pasta     5iLAF -0.9017599 -0.9759001
+    ## 3:      Pasta    Primed -0.9441355 -0.9320620
+    ## 4:      Pasta   t2iLGoY -0.8548639 -0.8845194
+    ## 5:      Pasta      RSeT -0.8461645 -0.8783101
 
 We can also display overall correlation values.
 

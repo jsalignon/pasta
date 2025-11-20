@@ -139,12 +139,12 @@ pdata[, age := gsub(" weeks", "", age) %>% as.integer]
 
 # Results
 
-Here we compute and visualize the Pearson correlation coefficients between chronological age and PASTA age scores, stratified by tissue and strain.
+Here we compute and visualize the Pearson correlation coefficients between chronological age and Pasta age scores, stratified by tissue and strain.
 
 ## Computing correlations
 
 ```{r correlations-by-group, message=FALSE, warning=FALSE}
-dt_cor = pdata[, .(PCC = cor(age, PASTA)), c('tissue', 'strain')][order(-PCC)]
+dt_cor = pdata[, .(PCC = cor(age, Pasta)), c('tissue', 'strain')][order(-PCC)]
 dt_cor[, strain := gsub('.*Apoe.*', 'Apoe', strain)]
 dt_cor[, strain := gsub('.*C57B.*', 'WT', strain)]
 dt_cor[, condition := paste0(tissue, ', ', strain)]

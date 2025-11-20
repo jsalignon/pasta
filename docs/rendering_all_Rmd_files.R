@@ -1,5 +1,5 @@
 
-# cd $PASTA_DIR
+# cd $Pasta_DIR
 
 # R
 

@@ -117,7 +117,7 @@ print(pdata1)
 # -------------------------------
 pdata1_long <- melt(pdata1, id.vars = names(dt_beta_gal), 
   variable.name = 'model_type')
-pdata1_long <- pdata1_long[model_type == 'PASTA']
+pdata1_long <- pdata1_long[model_type == 'Pasta']
 pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'), 
   variable.name = 'outcome', value.name = 'outcome_value')
 
@@ -128,7 +128,7 @@ pdata1_long1 <- melt(pdata1_long, id.vars = c('model_type', 'value'),
 dt_cor <- pdata1_long1[, .(PCC = cor(value, outcome_value)), by = .(model_type, outcome)][order(-PCC)]
 # Clean up outcome names
 dt_cor[, outcome := outcome %>% gsub('_', ' ', .) %>% gsub('beta', 'B', .) %>% gsub('nb of ', '', .)]
-dt_cor[, outcome := factor(outcome, levels = rev(as.character(dt_cor[model_type == 'PASTA']$outcome)))]
+dt_cor[, outcome := factor(outcome, levels = rev(as.character(dt_cor[model_type == 'Pasta']$outcome)))]
 print(dt_cor)
 
 

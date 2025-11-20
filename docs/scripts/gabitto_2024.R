@@ -99,7 +99,7 @@ dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 dt_cor <- dt_age_pred[, .(
   n_pseudobulks = .N,
   REG = cor(age, REG),
-  PASTA = cor(age, PASTA),
+  Pasta = cor(age, Pasta),
   TC46 = cor(age, CT46)
 ), by = chunk_size]
 print(dt_cor)
@@ -109,7 +109,7 @@ cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size",
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 
-model_levels <- c("REG", "TC46", "PASTA")
+model_levels <- c("REG", "TC46", "Pasta")
 cur_dt1$Modeling_strategy <- factor(cur_dt1$Modeling_strategy, levels = model_levels)
 
 
@@ -121,7 +121,7 @@ p1 <- ggplot(cur_dt1, aes(x = log2(chunk_size), y = PCC,
     colour = Modeling_strategy)) +
   geom_point(size = 2) +
   geom_line() +
-  scale_colour_manual(values = c('PASTA' = 'red2', 
+  scale_colour_manual(values = c('Pasta' = 'red2', 
     'REG' = 'dodgerblue', 'TC46' = 'forestgreen')) +
   ggtitle("Correlation between True Age and Predicted Age Scores") +
   xlab("log2(Chunk Size)") +

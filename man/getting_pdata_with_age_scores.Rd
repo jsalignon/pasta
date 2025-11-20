@@ -9,7 +9,7 @@ getting_pdata_with_age_scores(
   filter_genes = FALSE,
   rank_norm = FALSE,
   REG = TRUE,
-  PASTA = TRUE,
+  Pasta = TRUE,
   CT46 = TRUE
 )
 }
@@ -22,7 +22,7 @@ getting_pdata_with_age_scores(
 
 \item{REG}{Logical. Include REG model predictions.}
 
-\item{PASTA}{Logical. Include PASTA model predictions.}
+\item{Pasta}{Logical. Include Pasta model predictions.}
 
 \item{CT46}{Logical. Include CT46 model predictions.}
 }

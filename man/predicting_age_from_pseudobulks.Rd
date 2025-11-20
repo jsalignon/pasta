@@ -7,7 +7,7 @@
 predicting_age_from_pseudobulks(
   seu_bulk,
   REG = TRUE,
-  PASTA = TRUE,
+  Pasta = TRUE,
   CT46 = TRUE
 )
 }
@@ -16,7 +16,7 @@ predicting_age_from_pseudobulks(
 
 \item{REG}{Logical. Include REG model predictions.}
 
-\item{PASTA}{Logical. Include PASTA model predictions.}
+\item{Pasta}{Logical. Include Pasta model predictions.}
 
 \item{CT46}{Logical. Include CT46 model predictions.}
 }

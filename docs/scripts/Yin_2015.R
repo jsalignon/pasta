@@ -109,7 +109,7 @@ pdata[, age := gsub(" weeks", "", age) %>% as.integer]
 # -------------------------------
 # 6. Computing Correlations
 # -------------------------------
-dt_cor = pdata[, .(PCC = cor(age, PASTA)), c('tissue', 'strain')][order(-PCC)]
+dt_cor = pdata[, .(PCC = cor(age, Pasta)), c('tissue', 'strain')][order(-PCC)]
 dt_cor[, strain := gsub('.*Apoe.*', 'Apoe', strain)]
 dt_cor[, strain := gsub('.*C57B.*', 'WT', strain)]
 dt_cor[, condition := paste0(tissue, ', ', strain)]

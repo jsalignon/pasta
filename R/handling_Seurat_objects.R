@@ -68,12 +68,12 @@ making_pseudobulks_from_seurat <- function(seu, chunk_size = 1000, verbose = TRU
 #'
 #' @param seu_bulk Seurat object with pseudobulk data.
 #' @param REG Logical. Include REG model predictions.
-#' @param PASTA Logical. Include PASTA model predictions.
+#' @param Pasta Logical. Include Pasta model predictions.
 #' @param CT46 Logical. Include CT46 model predictions.
 #' @return data.table. Phenotype data with age predictions.
 #' @export
 predicting_age_from_pseudobulks <- function(seu_bulk, 
-  REG = TRUE, PASTA = TRUE, CT46 = TRUE){
+  REG = TRUE, Pasta = TRUE, CT46 = TRUE){
 
   requireNamespace('data.table', quietly = TRUE)
   requireNamespace('Seurat', quietly = TRUE)
@@ -82,7 +82,7 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
   if(inherits(mat, 'dgCMatrix')) { mat %<>% as.matrix }
   mat %<>% filtering_age_model_genes_and_rank_norm
   pdata = seu_bulk[[c('chunk_size', 'type', 'age')]] %>% setDT
-  pdata %<>% adding_age_preds_to_pdata(t(mat), REG = REG, PASTA = PASTA, 
+  pdata %<>% adding_age_preds_to_pdata(t(mat), REG = REG, Pasta = Pasta, 
     CT46 = CT46)
   return(pdata)
 }
@@ -96,7 +96,7 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
 #' @param chunk_size Numeric. The number of cells to aggregate into each pseudobulk sample. Default is \code{1000}.
 #' @param verbose Logical. If \code{TRUE}, displays progress messages and summaries during processing. Default is \code{TRUE}.
 #' @param REG Logical. If \code{TRUE}, include age predictions from the REG model. Default is \code{TRUE}.
-#' @param PASTA Logical. If \code{TRUE}, include age predictions from the PASTA model. Default is \code{TRUE}.
+#' @param Pasta Logical. If \code{TRUE}, include age predictions from the Pasta model. Default is \code{TRUE}.
 #' @param CT46 Logical. If \code{TRUE}, include age predictions from the CT46 model. Default is \code{TRUE}.
 #'
 #' @return A \code{data.table} containing age prediction scores along with metadata from the pseudobulk samples.
@@ -110,10 +110,10 @@ predicting_age_from_pseudobulks <- function(seu_bulk,
 #'
 #' @export
 making_pseudobulks_and_predict_age <- function(seu, chunk_size = 1000, 
-  verbose = TRUE, REG = TRUE, PASTA = TRUE, CT46 = TRUE){
+  verbose = TRUE, REG = TRUE, Pasta = TRUE, CT46 = TRUE){
   seu_bulk = making_pseudobulks_from_seurat(seu, chunk_size = chunk_size, 
     verbose = verbose)
-  pdata = predicting_age_from_pseudobulks(seu_bulk, REG = REG, PASTA = PASTA, 
+  pdata = predicting_age_from_pseudobulks(seu_bulk, REG = REG, Pasta = Pasta, 
     CT46 = CT46)
   return(pdata)
 }
@@ -126,11 +126,11 @@ making_pseudobulks_and_predict_age <- function(seu, chunk_size = 1000,
 #' @param seu A Seurat object containing single-cell transcriptomic data.
 #' @param v_chunk_sizes A numeric vector specifying the different chunk sizes to use when creating pseudobulk samples. Default is \code{c(500, 1000)}.
 #' @param REG Logical. If \code{TRUE}, include predictions from the REG model. Default is \code{TRUE}.
-#' @param PASTA Logical. If \code{TRUE}, include predictions from the PASTA model. Default is \code{TRUE}.
+#' @param Pasta Logical. If \code{TRUE}, include predictions from the Pasta model. Default is \code{TRUE}.
 #' @param CT46 Logical. If \code{TRUE}, include predictions from the CT46 model. Default is \code{TRUE}.
 #' @param verbose Logical. If \code{TRUE}, prints progress and summary messages during processing. Default is \code{TRUE}.
 #'
-#' @return A \code{data.table} containing the combined prediction results from each chunk size. The output includes columns for chunk size, cell type, true age, and predicted age scores for the models used (REG, PASTA, CT46).
+#' @return A \code{data.table} containing the combined prediction results from each chunk size. The output includes columns for chunk size, cell type, true age, and predicted age scores for the models used (REG, Pasta, CT46).
 #'
 #' @examples
 #' \dontrun{
@@ -141,10 +141,10 @@ making_pseudobulks_and_predict_age <- function(seu, chunk_size = 1000,
 #'
 #' @export
 predicting_age_multiple_chunks <- function(seu, v_chunk_sizes = c(500, 1000), 
-  REG = TRUE, PASTA = TRUE, CT46 = TRUE, verbose = TRUE){
+  REG = TRUE, Pasta = TRUE, CT46 = TRUE, verbose = TRUE){
   pdata_big = purrr::map(v_chunk_sizes, 
     ~making_pseudobulks_and_predict_age(seu, .x, 
-      REG = REG, PASTA = PASTA, CT46 = CT46, verbose = verbose)) %>% 
+      REG = REG, Pasta = Pasta, CT46 = CT46, verbose = verbose)) %>% 
     do.call(rbind, .)
   return(pdata_big)
 }

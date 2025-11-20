@@ -19,22 +19,22 @@
 "cvfit_REG"
 
 
-#' The PASTA model
+#' The Pasta model
 #'
-#' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
-#'
-#' @format A cv.glmnet created using the glmnet package.
-#'
-"cvfit_PASTA"
-
-
-#' Beta coefficient for conveting PASTA predictions into age-shift units
-#'
-#' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
+#' The Pasta model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
 #'
 #' @format A cv.glmnet created using the glmnet package.
 #'
-"beta_PASTA"
+"cvfit_Pasta"
+
+
+#' Beta coefficient for conveting Pasta predictions into age-shift units
+#'
+#' The Pasta model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
+#'
+#' @format A cv.glmnet created using the glmnet package.
+#'
+"beta_Pasta"
 
 
 #' The Traditional classifier <40 vs >60 years old model
@@ -46,9 +46,9 @@
 "cvfit_C46"
 
 
-#' Beta coefficient for conveting PASTA predictions into age-shift units
+#' Beta coefficient for conveting Pasta predictions into age-shift units
 #'
-#' The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
+#' The Pasta model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples. 
 #'
 #' @format A cv.glmnet created using the glmnet package.
 #'

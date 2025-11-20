@@ -51,11 +51,11 @@ Here is how to predict age with a count matrix:
 mat = exprs(ES_GSE103938) %T>% pdim # 57,232 genes, 21 samples
 pdata = pData(ES_GSE103938) %>% copy %>% setDT
 mat %<>% filtering_age_model_genes_and_rank_norm %T>% pnrow # 8113 genes
-pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, PASTA = TRUE, CT46 = TRUE)
-pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
+pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, Pasta = TRUE, CT46 = TRUE)
+pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'Pasta', 'CT46')]
 ```
 
-    ##        title  treated_with                 vector      REG     PASTA     CT46
+    ##        title  treated_with                 vector      REG     Pasta     CT46
     ##       <char>        <char>                 <char>    <num>     <num>    <num>
     ## 1:  Prolif_1          <NA>    empty vector (MSCV) 45.52050  7.179945 5.182232
     ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161 -4.438762 3.149072
@@ -64,7 +64,7 @@ pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'PASTA', 'CT46')]
 Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cutoffs at <40 and >60 years, and Pasta, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
 
 ``` r
-print(dcast(pdata, treated_with ~ vector, value.var = 'PASTA', fun.aggregate = mean))
+print(dcast(pdata, treated_with ~ vector, value.var = 'Pasta', fun.aggregate = mean))
 ```
 
     ##      treated_with OSKM expressing vector RAS expressing vector empty vector (MSCV)

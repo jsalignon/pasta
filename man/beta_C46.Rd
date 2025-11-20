@@ -3,7 +3,7 @@
 \docType{data}
 \name{beta_C46}
 \alias{beta_C46}
-\title{Beta coefficient for conveting PASTA predictions into age-shift units}
+\title{Beta coefficient for conveting Pasta predictions into age-shift units}
 \format{
 A cv.glmnet created using the glmnet package.
 }
@@ -11,6 +11,6 @@ A cv.glmnet created using the glmnet package.
 beta_C46
 }
 \description{
-The PASTA model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples.
+The Pasta model is a glmnet model which was trained on transcriptomic samples of 21 datasets and multiple tissues to predict the age-shift between two pairs of samples.
 }
 \keyword{datasets}

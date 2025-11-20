@@ -4,7 +4,7 @@
 \alias{adding_age_preds_to_pdata}
 \title{Add Age Predictions to Phenotype Data}
 \usage{
-adding_age_preds_to_pdata(pdata, mat_t, REG = TRUE, PASTA = TRUE, CT46 = FALSE)
+adding_age_preds_to_pdata(pdata, mat_t, REG = TRUE, Pasta = TRUE, CT46 = FALSE)
 }
 \arguments{
 \item{pdata}{data.table. Phenotype data.}
@@ -13,7 +13,7 @@ adding_age_preds_to_pdata(pdata, mat_t, REG = TRUE, PASTA = TRUE, CT46 = FALSE)
 
 \item{REG}{Logical. Include REG model predictions.}
 
-\item{PASTA}{Logical. Include PASTA model predictions.}
+\item{Pasta}{Logical. Include Pasta model predictions.}
 
 \item{CT46}{Logical. Include CT46 model predictions.}
 }

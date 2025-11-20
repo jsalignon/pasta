@@ -58,7 +58,7 @@ pdata <- getting_pdata_with_age_scores(ES)
 Here we reshape the data to long format and extract information such as condition, time, and replicate details from the title.
 
 ```{r reshape-data, message=FALSE, warning=FALSE}
-pdata1 <- pdata[, c('title', 'PASTA', 'REG', 'CT46')]
+pdata1 <- pdata[, c('title', 'Pasta', 'REG', 'CT46')]
 dt <- melt(pdata1, id.vars = 'title', variable.name = 'model_type', value.name = 'age_score')
 dt[, title := gsub('RNA-seq_', '', title)]
 dt[, condition := gsub('-.*', '', title)]
@@ -75,7 +75,7 @@ dt[, time1 := as.integer(time)]
 The initial time points (Fibroblast, day 3 and 7) are the same between all conditions ('NHSM', '5iLAF', 'Primed', 't2iLGoY', 'RSeT'). We add these time point to each condition so we can then compute correlation.
 
 ```{r load-adjust-data, message=FALSE, warning=FALSE}
-dt_pasta <- dt[model_type == 'PASTA']
+dt_pasta <- dt[model_type == 'Pasta']
 
 # Separate fibroblast and non-fibroblast data
 dt_fibro <- dt_pasta[condition == 'Fibroblast']

@@ -9,7 +9,7 @@ making_pseudobulks_and_predict_age(
   chunk_size = 1000,
   verbose = TRUE,
   REG = TRUE,
-  PASTA = TRUE,
+  Pasta = TRUE,
   CT46 = TRUE
 )
 }
@@ -22,7 +22,7 @@ making_pseudobulks_and_predict_age(
 
 \item{REG}{Logical. If \code{TRUE}, include age predictions from the REG model. Default is \code{TRUE}.}
 
-\item{PASTA}{Logical. If \code{TRUE}, include age predictions from the PASTA model. Default is \code{TRUE}.}
+\item{Pasta}{Logical. If \code{TRUE}, include age predictions from the Pasta model. Default is \code{TRUE}.}
 
 \item{CT46}{Logical. If \code{TRUE}, include age predictions from the CT46 model. Default is \code{TRUE}.}
 }
