@@ -4,7 +4,7 @@
 **Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of human and mouse transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v1).
 
 <p align="center">
-<img src="/docs/images/Figure_S9.png" width="800" />
+<img src="/docs/images/Extended_Data_Fig_11.png" width="800" />
 </p>
 
 Sections: [Installation](#installation), [Quick start](#quick-start), [Examples](#examples), [Citation](#citation), [Licence](#licence)
@@ -55,11 +55,11 @@ pdata %<>% adding_age_preds_to_pdata(t(mat), REG = TRUE, Pasta = TRUE, CT46 = TR
 pdata[1:3, c('title', 'treated_with', 'vector', 'REG', 'Pasta', 'CT46')]
 ```
 
-    ##        title  treated_with                 vector      REG     Pasta     CT46
-    ##       <char>        <char>                 <char>    <num>     <num>    <num>
-    ## 1:  Prolif_1          <NA>    empty vector (MSCV) 45.52050  7.179945 5.182232
-    ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161 -4.438762 3.149072
-    ## 3: OSKM1nM_1 1nM Rapamycin OSKM expressing vector 36.73217 -8.277933 4.138329
+    ##        title  treated_with                 vector      REG      Pasta     CT46
+    ##       <char>        <char>                 <char>    <num>      <num>    <num>
+    ## 1:  Prolif_1          <NA>    empty vector (MSCV) 45.52050  13.584347 16.76572
+    ## 2:    OSKM_1          <NA> OSKM expressing vector 49.22161  -8.398071 10.18798
+    ## 3: OSKM1nM_1 1nM Rapamycin OSKM expressing vector 36.73217 -15.661724 13.38845
 
 Age can be predicted using either REG, a regression model, CT46, a young vs old classifier with young/old cutoffs at <40 and >60 years, and Pasta, an age-shift model trained with pairs of samples from individuals of at least 40 years of age-difference.
 
@@ -69,9 +69,10 @@ print(dcast(pdata, treated_with ~ vector, value.var = 'Pasta', fun.aggregate = m
 
     ##      treated_with OSKM expressing vector RAS expressing vector empty vector (MSCV)
     ##            <char>                  <num>                 <num>               <num>
-    ## 1:           <NA>              -3.816706              36.43337            4.762343
-    ## 2: 10nM Rapamycin             -15.788035              33.73355                 NaN
-    ## 3:  1nM Rapamycin              -6.103977              38.12827                 NaN
+    ## 1:           <NA>               -7.22115              68.93137            9.010281
+    ## 2: 10nM Rapamycin              -29.87072              63.82336                 NaN
+    ## 3:  1nM Rapamycin              -11.54863              72.13810                 NaN
+
 In this example, we can see the rejuvenating effect of OSKM and Rapamycin, and the aging effect of RAS-overexpression (i.e., Oncogene-induced senescence). Please note that Pasta predicts only relative age, so the predicted age-effects should mainly be compared between different samples of a given study.
 
 Here are the results when using the regression model:

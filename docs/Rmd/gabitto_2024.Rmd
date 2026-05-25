@@ -121,19 +121,28 @@ In this section, we compute correlations between the true age and predicted age 
 
 ## Correlation Analysis
 
-```{r compute-correlations, message=FALSE, warning=FALSE}
-# Compute correlations by chunk size for different modeling strategies
-dt_cor <- dt_age_pred[, .( 
+```{r compute-correlations-by-cell-type-and-chunk-size, message=FALSE, warning=FALSE}
+# Compute correlations by cell type and chunk size for different modeling strategies
+dt_cor_by_type_chunk <- dt_age_pred[, .( 
   n_pseudobulks = .N,
   REG = cor(age, REG),
   Pasta = cor(age, Pasta),
-  TC46 = cor(age, CT46)), by = chunk_size]
-print(dt_cor)
+  TC46 = cor(age, CT46)), by = c('chunk_size', 'type')]
+# print(dt_cor_by_type_chunk)
 ```
 
+```{r compute-correlations-by-chunk-size, message=FALSE, warning=FALSE}
+# Compute correlations by chunk size for different modeling strategies
+cur_dt_cor_chunk = dt_cor_by_type_chunk[, 
+    .(REG = mean(REG), Pasta = mean(Pasta), TC46 = mean(TC46)), by = chunk_size]
+print(cur_dt_cor_chunk)
+```
+Note: in this test dataset there is a single cell type with more than 500 cells so computing correlations by cell type first is not meaningful.
+
+
 ```{r reshape-correlations, message=FALSE, warning=FALSE}
-# Reshape the data into long format for plotting
-cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size", 
+# Reshape the correlation data into long format for plotting.
+cur_dt1 <- melt(cur_dt_cor_chunk, id.vars = "chunk_size", 
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 

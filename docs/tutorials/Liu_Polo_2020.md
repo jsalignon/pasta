@@ -16,7 +16,7 @@
 # Tutorial for analyzing GEO bulk RNA-Seq datasets with Pasta
 
 **Author:** Jérôme Salignon  
-**Date:** 2025-03-17
+**Date:** 2026-05-25
 
 # Introduction
 

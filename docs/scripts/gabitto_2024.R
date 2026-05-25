@@ -95,17 +95,21 @@ dt_age_pred <- predicting_age_multiple_chunks(seu, v_chunk_sizes, verbose = F)
 # -------------------------------
 # 6. Correlation Analysis
 # -------------------------------
-# Compute correlations by chunk size for different modeling strategies.
-dt_cor <- dt_age_pred[, .(
+# Compute correlations by cell type and chunk size for different modeling strategies
+dt_cor_by_type_chunk <- dt_age_pred[, .( 
   n_pseudobulks = .N,
   REG = cor(age, REG),
   Pasta = cor(age, Pasta),
-  TC46 = cor(age, CT46)
-), by = chunk_size]
-print(dt_cor)
+  TC46 = cor(age, CT46)), by = c('chunk_size', 'type')]
+# print(dt_cor_by_type_chunk)
+
+# Compute correlations by chunk size for different modeling strategies
+cur_dt_cor_chunk = dt_cor_by_type_chunk[, 
+    .(REG = mean(REG), Pasta = mean(Pasta), TC46 = mean(TC46)), by = chunk_size]
+print(cur_dt_cor_chunk)
 
 # Reshape the correlation data into long format for plotting.
-cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size", 
+cur_dt1 <- melt(cur_dt_cor_chunk, id.vars = "chunk_size", 
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 

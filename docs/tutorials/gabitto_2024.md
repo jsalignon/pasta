@@ -16,7 +16,7 @@
 # Tutorial for analyzing Seurat datasets with Pasta
 
 **Author:** Jérôme Salignon  
-**Date:** 2025-03-17
+**Date:** 2026-05-25
 
 # Introduction
 
@@ -167,31 +167,42 @@ predicted age scores and visualize the results.
 ## Correlation Analysis
 
 ``` r
-# Compute correlations by chunk size for different modeling strategies
-dt_cor <- dt_age_pred[, .( 
+# Compute correlations by cell type and chunk size for different modeling strategies
+dt_cor_by_type_chunk <- dt_age_pred[, .( 
   n_pseudobulks = .N,
   REG = cor(age, REG),
   Pasta = cor(age, Pasta),
-  TC46 = cor(age, CT46)), by = chunk_size]
-print(dt_cor)
+  TC46 = cor(age, CT46)), by = c('chunk_size', 'type')]
+# print(dt_cor_by_type_chunk)
 ```
 
-    ##     chunk_size n_pseudobulks       REG     Pasta        TC46
-    ##          <num>         <int>     <num>     <num>       <num>
-    ##  1:          1          1392 0.0928153 0.1889565  0.01863358
-    ##  2:          2           714 0.1205921 0.2478043  0.04883783
-    ##  3:          4           366 0.2092726 0.3713957  0.03836583
-    ##  4:          8           190 0.3391128 0.4838395  0.06944892
-    ##  5:         16           104 0.4583045 0.6005741  0.04355135
-    ##  6:         32            59 0.4755096 0.6534864 -0.01326929
-    ##  7:         64            38 0.6432975 0.7552937  0.14246422
-    ##  8:        128            27 0.6319542 0.7618285  0.15867524
-    ##  9:        256            20 0.7581683 0.8369504 -0.02586498
-    ## 10:        512            18 0.7734265 0.8399354  0.07893230
+``` r
+# Compute correlations by chunk size for different modeling strategies
+cur_dt_cor_chunk = dt_cor_by_type_chunk[, 
+    .(REG = mean(REG), Pasta = mean(Pasta), TC46 = mean(TC46)), by = chunk_size]
+print(cur_dt_cor_chunk)
+```
+
+    ##     chunk_size       REG     Pasta        TC46
+    ##          <num>     <num>     <num>       <num>
+    ##  1:          1 0.0928153 0.1889565  0.01863358
+    ##  2:          2 0.1205921 0.2478043  0.04883783
+    ##  3:          4 0.2092726 0.3713957  0.03836583
+    ##  4:          8 0.3391128 0.4838395  0.06944892
+    ##  5:         16 0.4583045 0.6005741  0.04355135
+    ##  6:         32 0.4755096 0.6534864 -0.01326929
+    ##  7:         64 0.6432975 0.7552937  0.14246422
+    ##  8:        128 0.6319542 0.7618285  0.15867524
+    ##  9:        256 0.7581683 0.8369504 -0.02586498
+    ## 10:        512 0.7734265 0.8399354  0.07893230
+
+Note: in this test dataset there is a single cell type with more than
+500 cells so computing correlations by cell type first is not
+meaningful.
 
 ``` r
-# Reshape the data into long format for plotting
-cur_dt1 <- melt(dt_cor[, c(1, 3:5)], id.vars = "chunk_size", 
+# Reshape the correlation data into long format for plotting.
+cur_dt1 <- melt(cur_dt_cor_chunk, id.vars = "chunk_size", 
                 variable.name = "Modeling_strategy", 
                 value.name = "PCC")
 
