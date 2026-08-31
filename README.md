@@ -1,7 +1,7 @@
 
 ## Welcome to Pasta!  
 
-**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of human and mouse transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v2.full).
+**Pasta** (P̲redicting a̲ge-s̲hift from t̲ranscriptomic a̲nalyses) is an R package designed to predict cellular age-effects from various kinds of human and mouse transcriptomic data, such as bulk and single-cell RNA-Seq, microarrays, and L1000 data. The tool streamlines the process of preparing transcriptomic datasets and making age-predictions using different models. For detailed information on the underlying method, please refer to our [paper](https://doi.org/10.1002/advs.76740).
 
 <p align="center">
 <img src="/docs/images/Extended_Data_Fig_11.png" width="800" />
@@ -107,7 +107,9 @@ In this example, we analyze a single-cell transcriptomic dataset of cortical neu
 
 If you use Pasta in your research, please cite our manuscript:
 
-Pasta, a versatile transcriptomic clock, maps the chemical and genetic determinants of aging and rejuvenation, [Salignon et al, 2025, bioRxiv](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v2.full).
+Salignon, J., Tsiokou, M., Marqués, P., Rodríguez-Diaz, E., Ang, H., Pietrocola, F., and Riedel, C.G. Pasta, a Versatile Transcriptomic Clock, Maps the Chemical and Genetic Determinants of Aging and Rejuvenation. Advanced Science n/a, e76740. https://doi.org/10.1002/advs.76740.
+
+Here are links to the [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v2.full) and the [paper](https://doi.org/10.1002/advs.76740).
 
 
 ## License
