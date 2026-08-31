@@ -109,8 +109,6 @@ If you use Pasta in your research, please cite our manuscript:
 
 Salignon, J., Tsiokou, M., Marqués, P., Rodríguez-Diaz, E., Ang, H., Pietrocola, F., and Riedel, C.G. Pasta, a Versatile Transcriptomic Clock, Maps the Chemical and Genetic Determinants of Aging and Rejuvenation. Advanced Science n/a, e76740. https://doi.org/10.1002/advs.76740.
 
-Here are links to the [preprint](https://www.biorxiv.org/content/10.1101/2025.06.04.657785v2.full) and the [paper](https://doi.org/10.1002/advs.76740).
-
 
 ## License
 **Licence**: This source code is released under the MIT licence, included [here](LICENSE).
